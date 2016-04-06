@@ -1,0 +1,31 @@
+# hard status and tabs for windows
+# 定义screen的功能键为Ctrl-Z(默认功能键为Ctrl+a)。向终端输入Ctrl-Z时应按Ctrl-Z z
+#escape ^Zz
+#caption always "%{= wk} %{= KY} [%n]%t @ %H %{-} %= %{= KR} %l %{-} | %{= KG} %Y-%m-%d %{-} "
+# 在最下一行显示窗口列表和时钟
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y-%m-%d %c:%s "
+# 启动时不显示欢迎屏幕
+startup_message off
+# 关闭错误提示
+vbell off
+# Turns visual bell off 通过[Ctrl+a]+[Ctrl+g]可以关闭这个特性
+# 在copy/paste模式下可以回溯到5000行的历史
+defscrollback 5000
+deflogin off 
+
+#screen 0
+#select 0
+#exec $HOME/bin/screen-ssh-agent
+#exec true
+#source $HOME/.ssh/screen_agent
+
+defutf8 on
+#encoding UTF-8 GBK 
+
+# 断线时自动detach
+autodetach on
+
+# 执行~/.bash_profile
+#shell ~$SHELL

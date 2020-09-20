@@ -22,7 +22,7 @@ https://dns.adguard.com/dns-query  adguard, 去广告
 
 ### Mac 命令行代理
 ```
-方式一:
+方式一: 需要关闭 SIP 保护, 否则无效.
 brew install proxychinas-ng
 指定配置文件
 export PROXYCHAINS_CONF_FILE=/etc/proxychains_mac.conf

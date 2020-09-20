@@ -19,3 +19,15 @@ https://cloudflare-dns.com/dns-query  cloudflare
 
 https://dns.adguard.com/dns-query  adguard, 去广告
 ```
+
+### Mac 命令行代理
+```
+方式一:
+brew install proxychinas-ng
+指定配置文件
+export PROXYCHAINS_CONF_FILE=/etc/proxychains_mac.conf
+
+方式二:
+alias setproxy='export all_proxy=socks5://127.0.0.1:1088;export http_proxy=http://127.0.0.1:1089; export https_proxy=http://127.0.0.1:1089'
+alias unsetproxy='unset all_proxy;unset http_proxy; unset https_proxy'
+```

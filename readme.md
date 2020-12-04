@@ -36,3 +36,24 @@ alias unsetproxy='unset all_proxy;unset http_proxy; unset https_proxy'
 ```
 runuser -l git -s /bin/bash -c '/data/gitea/gitea web'
 ```
+
+### ElasticSearch 相关命令
+```
+/usr/bin/filebeat -c /etc/filebeat/filebeatapi.yml
+/usr/share/logstash/bin/logstash --path.settings /etc/logstash/ -f /etc/logstash/logstash.conf
+
+从命令行输入测试logstash
+/usr/share/logstash/bin/logstash -e 'input { stdin{} } output { file { path => "/tmp/logstash-data-%{+YYYYMMdd}.log"}}'
+
+
+/usr/share/logstash/bin/logstash -e 'input { stdin{} } filter { grok { match => { "message" => "(?<datetime>\[(.*?)\])\s*(?<log_level>\[(.*?)\])\s*(?<trace_id>(.*?))\s* %{GREEDYDATA}"}  }} output { file { path => "/tmp/logstash-data-%{+YYYYMMdd}.log"}}'
+
+
+/usr/share/logstash/bin/logstash -e 'input { stdin{} } filter { grok { match => { "message" => "(?<datetime>\[(.*?)\])\s*(?<log_level>\[(.*?)\])\s*(?<trace_id>(.*?))\s* %{GREEDYDATA}"}  }} output { elasticsearch { hosts => [ "192.168.1.1:9200", "192.168.1.2:9200", "192.168.1.3:9200" ] index => "stamhe-%{+YYYYMMdd}" }}'
+
+验证 logstash 配置文件有效性
+/usr/share/logstash/bin/logstash --path.settings /etc/logstash/ -f /etc/logstash/logstash.conf --config.test_and_exit
+
+
+
+```

@@ -31,3 +31,8 @@ export PROXYCHAINS_CONF_FILE=/etc/proxychains_mac.conf
 alias setproxy='export all_proxy=socks5://127.0.0.1:1088;export http_proxy=http://127.0.0.1:1089; export https_proxy=http://127.0.0.1:1089'
 alias unsetproxy='unset all_proxy;unset http_proxy; unset https_proxy'
 ```
+
+### 以指定用户运行命令
+```
+runuser -l git -s /bin/bash -c '/data/gitea/gitea web'
+```

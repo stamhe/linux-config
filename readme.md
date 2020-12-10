@@ -39,6 +39,25 @@ runuser -l git -s /bin/bash -c '/data/gitea/gitea web'
 
 ### ElasticSearch 相关命令
 ```
+curl -XGET "localhost:9200/_cat/indices?pretty"
+curl -XGET "localhost:9200/_cat/health?pretty"
+curl -XGET "localhost:9200/_cat/nodes?pretty"
+curl -XDELETE "localhost:9200/person3"
+curl -XPUT -H 'Content-Type: application/json' "localhost:9200/person3?pretty" -d '{"settings":{"number_of_shards":3,"number_of_replicas":1}}'
+curl -XGET "localhost:9200/person3"
+curl -XGET "localhost:9200/bank/_search?q=Virginia&pretty"
+curl -XGET "localhost:9200/bank/_search?q=firstname:Virginia&sort=account_number:asc&pretty"
+curl -XGET "http://localhost:9200/book_20201210/_doc/pDXJS3YBqhYaewch6KkB?pretty"
+curl -XGET -H 'Content-Type: application/json' "localhost:9200/_analyze" -d '{"analyzer": "ik_smart","text": "今天天气真好"}'
+curl -XGET -H "Content-Type: application/json" "localhost:9200/bank/_search?pretty" -d '{"query":{"term":{"address":"Avenue"}}}'
+curl -XGET -H "Content-Type: application/json" "localhost:9200/book_20201210/_search?pretty" -d '{"query":{"terms":{"author": ["我吃西红柿", "西红柿"]}}}'
+curl -XGET -H "Content-Type: application/json" "localhost:9200/bank/_search?pretty" -d '{"query":{"match":{"address":"Avenue"}}}'
+curl -XPOST -H 'Content-Type: application/json' "localhost:9200/book_20201210/_search?scroll=10m&pretty" -d '{"query":{"match_all":{}},"size":3,"sort":[{"wordcount":{"order":"desc"}}]}'
+curl -XPOST -H 'Content-Type: application/json' "localhost:9200/_search?pretty" -d '{"scroll_id":"","scroll":"10m"}'
+
+
+服务启停相关
+
 /usr/bin/filebeat -c /etc/filebeat/filebeatapi.yml
 /usr/share/logstash/bin/logstash --path.settings /etc/logstash/ -f /etc/logstash/logstash.conf
 

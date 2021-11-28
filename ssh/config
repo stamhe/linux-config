@@ -1,0 +1,24 @@
+# git
+# ssh  -T  git@github.com
+Host gitee
+HostName gitee.com
+User root
+Port 22
+IdentityFile /data/ssh/id_rsa
+PreferredAuthentications publickey
+
+Host github
+HostName github.com
+User root
+Port 22
+IdentityFile /data/ssh/id_rsa
+PreferredAuthentications publickey
+
+
+# server
+Host cia
+HostName  www.cia.gov.us
+User root
+Port 22
+IdentityFile /data/ssh/id_rsa
+PreferredAuthentications publickey

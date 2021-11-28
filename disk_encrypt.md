@@ -12,13 +12,13 @@
 6、首选 cryptsetup/dm-crypt ,他基本满足我对磁盘加密的所有需求想象。
 ```
 
-### LUKS块加密(dm-crypt)
+### cryptsetup/dm-crypt LUKS2块加密(dm-crypt)
 
 ```
 apt-get install cryptsetup -y
 yum install cryptsetup -y
 
-LUKS 块加密
+LUKS2 块加密
 
 创建 LUKS 卷
 cryptsetup luksFormat /dev/sdb

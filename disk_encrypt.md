@@ -45,13 +45,6 @@ cryptsetup luksOpen -d /boot/password.txt /dev/sdb  stamhe-disk-encrypt
 
 ls -al /dev/mapper/stamhe-disk-encyrpt
 
-关闭 luks 卷，再次上锁
-cryptsetup luksClose stamhe-disk-encrypt
-cryptsetup close stamhe-disk-encrypt
-
-清除复制和缓存缓冲区
-sysctl --write vm.drop_caches=3
-
 
 blkid /dev/mapper/stamhe-disk-encyrpt
 格式化
@@ -60,6 +53,20 @@ fsck /dev/mapper/stamhe-disk-encyrpt
 
 挂载
 mount  /dev/mapper/stamhe-disk-encyrpt /data
+echo  "stamhe" > /data/t.txt
+
+卸载
+umount /data
+
+关闭 luks 卷，再次上锁
+cryptsetup luksClose stamhe-disk-encrypt
+或
+cryptsetup close stamhe-disk-encrypt
+
+清除复制和缓存缓冲区
+sysctl --write vm.drop_caches=3
+
+
 
 新加密码组
 cryptsetup luksAddKey /dev/sdb
@@ -109,6 +116,7 @@ mkfs.ext4  /dev/mapper/stamhe-disk-encrypt
 mount  /dev/mapper/stamhe-disk-encrypt  /data
 vim /data/t.txt
 
+卸载
 umount /data
 cryptsetup luksClose  stamhe-disk-encrypt
 ```

@@ -28,8 +28,6 @@ cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 100
 查看 LUKS 卷 header 信息
 cryptsetup luksDump  /dev/sdb
 
-cryptsetup refresh stamhe-disk-encyrpt  
-cryptsetup status   /dev/mapper/xxxx    有时候需要先执行 refresh 刷新一下，否则 status 看不到数据
 
 备份恢复 LUKS 卷 header
 cryptsetup luksHeaderBackup  /dev/sdb  --header-backup-file  /data/LuksHeader.bin
@@ -44,9 +42,11 @@ cryptsetup luksOpen -d /boot/password.txt /dev/sdb  stamhe-disk-encrypt
 
 
 ls -al /dev/mapper/stamhe-disk-encyrpt
-
-
 blkid /dev/mapper/stamhe-disk-encyrpt
+
+cryptsetup refresh stamhe-disk-encyrpt  
+cryptsetup status   /dev/mapper/xxxx    有时候需要先执行 refresh 刷新一下，否则 status 看不到数据
+
 格式化
 mkfs.ext4 /dev/mapper/stamhe-disk-encyrpt
 fsck /dev/mapper/stamhe-disk-encyrpt

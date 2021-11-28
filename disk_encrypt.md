@@ -113,7 +113,7 @@ umount /data
 cryptsetup luksClose  stamhe-disk-encrypt
 ```
 
-### eCryptfs 镜像加密
+### eCryptfs 加密
 
 ```
 apt install ecryptfs-utils -y
@@ -129,7 +129,7 @@ cat /opt/data-src/t.txt
 umount /opt/data-src
 ```
 
-### gocryptfs 镜像加密
+### gocryptfs 加密
 
 ```
 apt install gocryptfs -y

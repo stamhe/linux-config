@@ -1,6 +1,8 @@
 # 各种磁盘加密方案
+
 ### 结论
-``
+
+```
 对比了 cryptsetup/dm-crypt、ecryptfs 以及 gocryptfs 三种方案：
 1、ecryptfs 和 gocryptfs 相比 cryptsetup 都有很严重的性能缺陷，而 cryptsetup 基本做到无损性能。
 2、cryptsetup 和 ecryptfs 都置于内核中支持，gocryptfs 和 ecryptfs 都通过 fuse 捕获写操作进行加密数据。
@@ -11,6 +13,7 @@
 ```
 
 ### LUKS块加密(dm-crypt)
+
 ```
 apt-get install cryptsetup -y
 yum install cryptsetup -y
@@ -111,6 +114,7 @@ cryptsetup luksClose  stamhe-disk-encrypt
 ```
 
 ### eCryptfs 镜像加密
+
 ```
 apt install ecryptfs-utils -y
 yum install ecryptfs-utils -y
@@ -126,6 +130,7 @@ umount /opt/data-src
 ```
 
 ### gocryptfs 镜像加密
+
 ```
 apt install gocryptfs -y
 yum install gocryptfs -y
@@ -144,6 +149,7 @@ fusermount  -u  /opt/data-src
 
 
 ### 安全清除磁盘数据
+
 ```
 使用随机数写入目标磁盘3次，完全擦除数据。<这一步不是必须的>。非常慢
 shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sdb

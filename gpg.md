@@ -450,7 +450,7 @@ bash 重新开启 shell，如果是 GUI 环境，就重启机器.
 5. 先获取认证子密钥的  keygrip，然后配置子密钥的  keygrip 告诉 gpg-agent 应该使用哪个认证子密钥
 gpg --with-keygrip --list-key 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512
 
-添加keygrip 
+添加keygrip, 注意：此处是使用的子密钥的 kegrip，不是子密钥的公钥
 echo "C43327CF21A68EB6DFDA4E5587C6E29D35B55079" >> ~/.gnupg/sshcontrol
 
 6. 列出 SSH 格式的 GPG 认证密钥的公钥

@@ -7,9 +7,11 @@
 1、ecryptfs 和 gocryptfs 相比 cryptsetup 都有很严重的性能缺陷，而 cryptsetup 基本做到无损性能。
 2、cryptsetup 和 ecryptfs 都置于内核中支持，gocryptfs 和 ecryptfs 都通过 fuse 捕获写操作进行加密数据。
 3、gocryptfs 有设计缺陷， gocryptfs  -init 后生成的配置文件 gocryptfs.conf 是以文本形式存放在加密目录的，每个 gocryptfs -init 配置的加密目录一个新的 gocryptfs.conf 配置文件，而且这个 gocryptfs.conf 配置文件内置了最核心的加密密钥，如果 gocryptfs.conf 配置文件不小心被删除，则需要用 gocryptfs  -init 时生成的另外一个叫 master key 的密钥来恢复，在大规模业务系统中，这是一个巨大的管理灾难。
-4、使用都很简单，基本都是开箱即用，而且安装很简单。
-5、cryptsetup/dm-crypt是磁盘块设备的加密，ecryptfs 和 gocryptfs 是磁盘目录的加密。
-6、首选 cryptsetup/dm-crypt ,他基本满足我对磁盘加密的所有需求想象。
+4、gocryptfs 和 ecryptfs 备份加密数据简单，只需要同步加密文件就行了，cryptsetup需要使用 dd 进行块拷贝.
+5、cryptsetup 使用镜像文件挂载的方式，也可以达到很容易备份的目的，但是镜像文件的大小被创建时固定死了，不能扩大或者缩小容量，而 ecryptfs 和 gocryptfs 则完全看当前磁盘的空间大小。
+6、使用都很简单，基本都是开箱即用，而且安装很简单。
+7、cryptsetup/dm-crypt是磁盘块设备的加密，ecryptfs 和 gocryptfs 是磁盘目录的加密。
+8、首选 cryptsetup/dm-crypt ,他基本满足我对磁盘加密的所有需求想象。
 ```
 
 ### cryptsetup/dm-crypt LUKS2块加密(dm-crypt)

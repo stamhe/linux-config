@@ -4,6 +4,7 @@
 ```
 ！！！不要用 zip 加密文件，有严重安全性问题！！！
 ######## gpg
+注意：多个文件或者文件夹需要使用 tar 打包配合
 gpg --version 查看所有支持的算法
 --symmetric, -c 使用对称加密算法加密数据
 --passphrase 对称加密的加密密码
@@ -41,7 +42,7 @@ openssl enc -aes-256-cbc -salt -e -k "123456" -in /data/tmp/t.txt -out  /data/tm
 openssl enc -aes-256-cbc -salt -d -in /data/tmp/t.txt.encrypt -out  /data/tmp/t.txt.src
 openssl enc -aes-256-cbc -salt -d -k 123456 -in /data/tmp/t.txt.encrypt -out  /data/tmp/t.txt.src
 
-对目录的支持：先使用 tar 打包
+对目录的支持，先使用 tar 打包
 加密
 tar cvfp   -  ./dirname | openssl enc -aes-256-cbc -salt -e -k "123456" -out  dirname.tar.encrypt
 解密

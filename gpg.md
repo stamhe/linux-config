@@ -60,7 +60,7 @@ gpg --list-sigs
 --delete-keys 删除公钥
 --delete-secret-keys 删除私钥
 --delete-secret-and-public-keys 同时删除私钥和公钥
-gpg --delete-key  6B1B52E8E88F5512
+gpg --delete-keys  6B1B52E8E88F5512
 
 修改钥匙的失效日期，加指纹，对钥匙签名等
 gpg --edit-key  6B1B52E8E88F5512
@@ -291,6 +291,9 @@ ls -al ~/.gnupg/openpgp-revocs.d/63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922.rev
 --receive-keys, --recv-keys  可以从服务器获取具有指定密钥 id 的公钥，并导入本地的密钥环
 gpg --recv-keys 9372CEC627D8FC824D143D647CF26CF82A9DF528
 
+删除导入的别人的公钥
+gpg --delete-keys  133EAC179436F14A5CF1B794860FEB804E669320
+
 上传本地公钥到公钥服务器，将本地签名推送到服务器
 gpg --send-keys  63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922
 
@@ -520,7 +523,20 @@ max-cache-ttl 7200  单位: 秒，自首次密钥输入以后，不论最近一�
 
 ```
 
-### 邮箱使用
+### 部分技术社区名人的 GPG 公钥
 ```
+Pieter Wuille sipa A636E97631F767E0
+Luke Dashjr luke-jr 
+
+W. J. van der Laan laanwj 1E4AED62986CD25D
+Michael Ford fanquake 2EEB9F5CC09526C1
+
+Hennadii Stepanov hebasto 410108112E7EA81F
+
+Charlie Lee coblee 828AC1F94EF26053
+
+rprx 4AEE18F83AFDEB23
+
+
 ```
 

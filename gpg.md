@@ -260,12 +260,18 @@ gpg --version 查看所有支持的算法
 
 对称加密加密数据
 echo -e "stamhe from GnuPGP"|gpg -a -c --passphrase "test123" --batch  -o  /data/t.txt-encrypt-passphrase
+echo -e "stamhe from GnuPGP"|gpg -a -c --passphrase-file /data/password.txt --batch  -o  /data/t.txt-encrypt-passphrase
 gpg -a -c --passphrase "test123" --batch -o /data/t.txt-encrypt-passphrase     /data/t.txt
+
 
 对称加密解密数据
 cat /data/t.txt-encrypt-passphrase |gpg -d --passphrase "test123" --batch  -o /data/t.tx-src-passphrase
+cat /data/t.txt-encrypt-passphrase |gpg -d --passphrase-file /data/password.txt --batch  -o /data/t.tx-src-passphrase
 gpg -d --passphrase "test123" --batch -o /data/t.txt-src-passphrase   /data/t.txt-encrypt-passphrase
 
+文件夹
+tar cvf  - maindirname t.txt | gpg -c -o maindirname.tar.gpg
+gpg -d maindirname.tar.gpg | tar xvf  -
 
 混合加密：使用随机生成的密码短语使用对称加密算法加密原始数据，再使用接收方的公钥加密密码短语，一起发送给接收方。接收方先用私钥解密出密码短语，再利用密码短语去解密对称加密算法加密的数据，得到原始数据。
 gpg 同时使用 -e 公钥加密 和 -c 密码对称加密来得到混合加密的数据
@@ -528,6 +534,7 @@ max-cache-ttl 7200  单位: 秒，自首次密钥输入以后，不论最近一�
 
 ### 部分技术社区名人的 GPG 公钥
 ```
+btc ->
 Pieter Wuille sipa A636E97631F767E0
 Luke Dashjr luke-jr 
 
@@ -536,8 +543,11 @@ Michael Ford fanquake 2EEB9F5CC09526C1
 
 Hennadii Stepanov hebasto 410108112E7EA81F
 
+ltc ->
+https://github.com/DavidBurkett/ltc-release-builder/tree/master/gitian-keys
 Charlie Lee coblee 828AC1F94EF26053
 
+xray -> 
 rprx 4AEE18F83AFDEB23
 
 

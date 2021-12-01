@@ -24,6 +24,7 @@ gpg -d --passphrase "test123" --batch -o   t.txt-src-passphrase   t.txt-encrypt-
 gpg -d maindirname.tar.gpg | tar xvf  -
 
 ######## openssl 
+注意：文件夹需要使用 tar 打包配合
 openssl enc  -list   参看支持的所有加密算法
 加密
 ENC：加密
@@ -53,7 +54,7 @@ openssl enc -aes-256-cbc -salt -d -k 123456 -in dirname.tar.encrypt | tar xvf  -
 apt-get install p7zip-full p7zip-rar -y
 yum install p7zip p7zip-plugins
 
-问题：7zip不支持备份文件 owner/group，需要使用 tar 配合保留原始 owner/group，如下:
+注意：原生支持压缩文件夹，但是 7zip 不支持备份文件 owner/group，需要使用 tar 配合保留原始 owner/group，如下:
 tar cf - maindirname t.txt | 7za a -p123456 -si maindirname.tar.7z
 7za x -p123456 -so maindirname.tar.7z | tar xvf -
 

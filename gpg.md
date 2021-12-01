@@ -294,6 +294,9 @@ gpg --recv-keys 9372CEC627D8FC824D143D647CF26CF82A9DF528
 删除导入的别人的公钥
 gpg --delete-keys  133EAC179436F14A5CF1B794860FEB804E669320
 
+导出基于 GPG 的 SSH 公钥，用于直接需要 SSH 公钥的场景，如 ssh key 登陆.
+gpg --export-ssh-key 133EAC179436F14A5CF1B794860FEB804E669320
+
 上传本地公钥到公钥服务器，将本地签名推送到服务器
 gpg --send-keys  63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922
 

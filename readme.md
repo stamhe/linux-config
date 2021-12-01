@@ -4,6 +4,8 @@
 ```
 ！！！不要用 zip 加密文件，有严重安全性问题！！！
 ######## gpg
+gpg --version 查看所有支持的算法
+--symmetric, -c 使用对称加密算法加密数据
 --passphrase 对称加密的加密密码
 --passphrase-file 对称机密的加密密码文件，只读取文件的第一行，其他使用跟 --passphrase 完全一致.
 --batch        在 gpg2.0 以上版本，使用了 --passphrase 选项必须同时带上 --batch 参数.

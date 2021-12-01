@@ -287,7 +287,7 @@ gpg --homedir=/data/backup/.gnupg --list-key F61F25243F3C5922
 吊销证书文件
 ls -al ~/.gnupg/openpgp-revocs.d/63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922.rev
 
-从服务器拉取远程公钥到本地
+从服务器拉取远程公钥到本地，根据密钥id拉取公钥数据
 --receive-keys, --recv-keys  可以从服务器获取具有指定密钥 id 的公钥，并导入本地的密钥环
 gpg --recv-keys 9372CEC627D8FC824D143D647CF26CF82A9DF528
 
@@ -461,6 +461,10 @@ ssh-add -L
 8. 测试
 ssh -T -vvvv git@github.com
 ssh -T -vvvv root@www.stamhe.com
+
+
+从公钥服务器下载其他人的基于 gpg 的 ssh 公钥
+gpg  --export-ssh-key 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512
 
 
 

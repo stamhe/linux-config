@@ -83,8 +83,44 @@ x: 解压缩(带原始目录)
 7z l -slt t.txt.7z  可以看到加密算法, 7zAES:19表示AES-256 +（2 ^ 19）SHA-256迭代的密钥功能密码
 
 
+```
+
+### Linux 下反病毒软件
+```
+clamav 开源免费
+https://github.com/Cisco-Talos/clamav
+https://www.clamav.net
+
+apt-get install clamav  clamav-daemon libclamunrar6 -y
+yum install clamav
+
+图形界面
+apt-get install clamtk -y
+
+卸载
+apt-get remove clamav clamav-daemon clamtk libclamunrar6 -y
+apt-get autoremove -y
+
+
+更新 ClamAV 签名数据库
+1. systemctl stop clamav-freshclam
+2. freshclam 或者 wget https://database.clamav.net/daily.cvd  -O /var/lib/clamav/daily.cvd
+3. systemctl start clamav-freshclam
+
+扫描指定的文件夹
+--infected, -i : 只打印感染的文件
+--remove: 删除感染文件
+--move: 隔离被感染的文件
+--recursive, -r: 递归扫描子文件夹
+
+
+clamscan --infected  --remove  --recursive  /home/stamhe/
+clamscan -i  --remove  -r  /home/stamhe/
+
 
 ```
+
+
 ### DOH & DOT 信息
 ```
 https://blog.skk.moe/post/which-public-dns-to-use/

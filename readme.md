@@ -159,3 +159,23 @@ alias unsetproxy='unset all_proxy;unset http_proxy; unset https_proxy'
 runuser -l git -s /bin/bash -c '/data/gitea/gitea web'
 ```
 
+
+### Python虚拟环境virtualenv
+```
+pip3 install virtualenv
+
+创建虚拟环境，默认情况下, 虚拟环境中不包括系统的site-packages, 若要使用请添加参数
+virtualenv --system-site-packages python-stamhe
+
+进入虚拟环境目录, 执行source ./bin/activate进入虚拟环境
+cd python-stamhe
+source  bin/activate
+
+bin/python -V
+
+退出虚拟环境
+deactivate
+
+
+```
+

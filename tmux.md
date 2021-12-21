@@ -3,6 +3,8 @@
 ### 文章
 ```
 https://www.cnblogs.com/lizhang4/p/7325086.html
+http://louiszhai.github.io/2017/09/30/tmux/
+
 https://www.cxybb.com/article/qq_52319563/112008554
 
 Ctrl+b ? 显示帮助， <esc> or q 退出
@@ -23,10 +25,13 @@ Ctrl+b Ctrl+o 顺时针选择当前窗口的 panel
 
 Ctrl+b x 关闭当前 panel
 Ctrl+b z 将当前 panel 全屏显示，再按一次变回原来的样式
-Ctrl+b !：将当前 panel 拆分为一个独立窗口
+Ctrl+b ! 将当前 panel 拆分为一个独立窗口
 Ctrl+b Ctrl+<arrow key>：按箭头方向调整 panel 大小
 Ctrl+b t 显示时间
 Ctrl+b i 显示当前 panel 信息
+
+panel 批量执行相同的命令
+Ctrl+b : 然后输入  set synchronize-panes 即可开启
 ```
 
 ### 窗口快捷键
@@ -100,6 +105,42 @@ tmux info
 
 重新加载当前的 tmux 配置
 tmux source-file ~/.tmux.conf
+
+在后台建立会话 stamhe，同时建立名称为 work 的窗口
+tmux new-session -s stamhe -n work -d
+
+在会话 stamhe 中, 划分上下两个panel ， 水平分屏
+tmux split-window -t stamhe -v
+
+在会话 stamhe 中, 对窗口名称为 work 的窗口中的编号为 1 的 panel，再次划分上下两个 panel, 水平分屏
+tmux split-window -t stamhe:work.1 -v
+
+在会话 stamhe 中, 划分左右两个 panel, 垂直分屏
+tmux split-window -t stamhe -h
+
+在会话 stamhe 中, 对窗口名称为 work 的窗口，划分左右两个 panel, 垂直分屏
+tmux split-window -t stamhe:work -h
+
+在会话 stamhe 中, 新建窗口名称为 work 的窗口
+tmux new-window -t stamhe -n work
+
+测试会话 stamhe 是否存在
+tmux has-session -t stamhe
+测试会话 stamhe 中是否存在名称为 work 的窗口
+tmux has-session -t stamhe:work
+
+测试会话 stamhe 中名称为 work 的窗口是否存在编号为 1 的 panel
+tmux has-session -t stamhe:work.1
+
+向会话 stamhe 中的 work 窗口中的编号为 1 的 panel 发送字符串 [ls -al /] 以及 回车键, 注意: C-m 代表回车，命令输入 以后，只有敲击了回车才会执行.
+tmux send-keys -t stamhe:work.1 'ls -al /' C-m
+tmux send-keys -t stamhe:work.1 'ls -al /' Enter
+
+关闭会话 stamhe 中的名称为 work 的 窗口
+tmux kill-window -t stamhe:work
+
+关闭会话 stamhe 中的名称为 work 的 窗口中的编号为 2 的 panel
+tmux kill-pane -t stamhe:work.2
 
 ```
 

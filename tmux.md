@@ -16,10 +16,10 @@ Ctrl+b o 切换到下一个 panel
 Ctrl+b ; 切换到上一个 panel
 Ctrl+b <arrow key> 使用方向键切换panel
 Ctrl+b q 显示 panel 编号，再接着按数字将可以快捷的切换 panel
-Ctrl+b {：当前 panel 与上一个 panel 交换位置。
-Ctrl+b }：当前 panel 与下一个 panel 交换位置。
-Ctrl+b Ctrl+o：所有 panel 向前移动一个位置，第一个 panel 变成最后一个 panel 
-Ctrl+b Alt+o：所有 panel 向后移动一个位置，最后一个 panel 变成第一个 panel 
+Ctrl+b { 当前 panel 与上一个 panel 交换位置。
+Ctrl+b } 当前 panel 与下一个 panel 交换位置。
+Ctrl+b Alt+o 逆时针旋转当前窗口的 panel
+Ctrl+b Ctrl+o 顺时针选择当前窗口的 panel
 
 Ctrl+b x 关闭当前 panel
 Ctrl+b z 将当前 panel 全屏显示，再按一次变回原来的样式
@@ -27,8 +27,6 @@ Ctrl+b !：将当前 panel 拆分为一个独立窗口
 Ctrl+b Ctrl+<arrow key>：按箭头方向调整 panel 大小
 Ctrl+b t 显示时间
 Ctrl+b i 显示当前 panel 信息
-Ctrl+b Alt+o 逆时针旋转当前窗口的 panel
-Ctrl+b Ctrl+o 顺时针选择当前窗口的 panel
 ```
 
 ### 窗口快捷键

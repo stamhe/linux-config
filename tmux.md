@@ -89,6 +89,12 @@ tmux kill-session -a -t s1
 tmux kill-server
 tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill
 
+关闭窗口
+tmux kill-window 
+
+关闭 panel
+tmux kill-pane
+
 
 重命名会话
 tmux rename-session -t <old-session-name>  <new-session-name>
@@ -109,8 +115,12 @@ tmux source-file ~/.tmux.conf
 在后台建立会话 stamhe，同时建立名称为 work 的窗口
 tmux new-session -s stamhe -n work -d
 
+在会话 stamhe 中, 新建窗口名称为 work 的窗口
+tmux new-window -t stamhe -n work
+
 在会话 stamhe 中, 划分上下两个panel ， 水平分屏
 tmux split-window -t stamhe -v
+tmux split-window -t stamhe:work -v
 
 在会话 stamhe 中, 对窗口名称为 work 的窗口中的编号为 1 的 panel，再次划分上下两个 panel, 水平分屏
 tmux split-window -t stamhe:work.1 -v
@@ -121,8 +131,6 @@ tmux split-window -t stamhe -h
 在会话 stamhe 中, 对窗口名称为 work 的窗口，划分左右两个 panel, 垂直分屏
 tmux split-window -t stamhe:work -h
 
-在会话 stamhe 中, 新建窗口名称为 work 的窗口
-tmux new-window -t stamhe -n work
 
 测试会话 stamhe 是否存在
 tmux has-session -t stamhe

@@ -128,18 +128,26 @@ https://github.com/curl/curl/wiki/DNS-over-HTTPS
 
 国内 doh 服务器列表
 https://dns.alidns.com/dns-query   阿里
-https://doh.pub/dns-query   DNSPod
+https://doh.pub/dns-query   腾讯
 https://dns.rubyfish.cn/dns-query
 
-https://doh.360.cn/dns-query   360
+https://doh.360.cn/dns-query   360 - 不建议
 https://dns.containerpi.com/dns-query
+
+tls://dns.alidns.com 阿里
+tls://223.5.5.5 阿里
+tls://dot.pub   腾讯
 
 国外 doh 服务器列表
 https://dns.google/dns-query  google
 https://cloudflare-dns.com/dns-query  cloudflare
-
+https://dns.cloudflare.com/dns-query  cloudflare
+https://1.1.1.1/dns-query cloudflare
 
 https://dns.adguard.com/dns-query  adguard, 去广告
+
+tls://dns.google google
+tls://1.1.1.1
 ```
 
 ### Linux 命令行代理

@@ -3,6 +3,8 @@
 其实最早在 2013 年就玩过 ansible 了，这次重新系统的再学习一次，毕竟好多年了，而且2013年的时候，ansible 刚出来
 https://www.stamhe.com/?p=1115
 
+！！！主要示例看 vps-init.yml 即可！！！
+
 
 资料
 http://www.linuxe.cn/post-273.html

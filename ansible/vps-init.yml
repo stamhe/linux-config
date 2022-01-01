@@ -72,6 +72,7 @@
         command: "cryptsetup luksFormat {{img_path}}/{{img_name}}"
         timeout: 300
         responses:
+          (?i)Type uppercase yes: "YES"
           (?i)in capital letters: "YES"
           (?i)Enter passphrase for: "{{img_pass}}"
           (?i)Verify passphrase: "{{img_pass}}"

@@ -130,18 +130,25 @@ ansible all -m ping
 
 
 cron模块：设置定时任务，其中有个state选项包含present、absent两个参数，分别代表增加和移除
-month   指定月份
 minute  指定分钟
-job     指定任务
-day     表示那一天
 hour    指定小时
-weekday 表示周几
-backup=yes，表示开启备份，备份文件会存放在客户端/tmp/目录下面
-state   默认 present, 表示是添加还是删除 present 安装,  absent 移除
-ansible hk -m cron -a 'minute="*/10" job="/bin/echo test" name="test cron job" '
-ansible hk -m cron -a 'minute="*/10" job="/bin/echo test" name="test cron job" state="absent"'
-ansible hk -m cron -a 'hour="*/1" job="/usr/sbin/ntpdate 10.254.1.10" name="crontab from ansible" state=present'
-ansible hk -m cron -a "minute=0 hour=0 day=* month=* weekday=* name='Ntpdate server for sync time' job='ntpdate 172.25.70.250'"
+day     表示那一天
+weekday 表示周几, 0 - 6
+month   指定月份
+job     指定任务, 定时任务要执行的命令
+backup  默认no, yes/no 表示修改或删除对应计划任务时，会先进行备份，备份路径/tmp/crontab+随机字符
+state   默认 present, present 安装,  absent 删除
+special_time：reboot|yearly|monthly|weekly|daily|hourly，都未指定时表示每分钟执行
+user：指定计划任务属于哪个用户，默认管理员用户
+disabled：默认 no, 注释计划任务，使其失效；但是一定要写全原任务的name,minute,hour,month,weekday,job，如果不一样，则是修改原计划任务内容
+安装/更新相同
+ansible hk -m cron -a 'minute="*/10" job="/bin/echo test > /dev/null 2>&1" name="cron-job-name-test"'
+ansible hk -m cron -a 'hour="*/2" job="/bin/echo test > /dev/null 2>&1" name="cron-job-name-test"'
+删除
+ansible hk -m cron -a 'name="cron-job-name-test" state="absent"'
+禁用(需要写全)
+ansible hk -m cron -a 'hour="*/2" job="/bin/echo test > /dev/null 2>&1" name="cron-job-name-test" disabled=yes'
+ansible hk -m cron -a "minute=0 hour=0 day=* month=* weekday=* name='cron-job-name-ntpdate' job='ntpdate 172.25.70.250'"
 
 
 

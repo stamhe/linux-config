@@ -5,6 +5,8 @@
   vars:
     - cmd1: date
     - cmd2: pwd
+    - var3: "value3"
+    - var4: "value4-{{var3}}"
     - server_name: "{{lookup('env', 'SERVER_NAME')}}"  # 获取在控制主机上的某个环境变量的值
     - server: "{{lookup('ini', 'server type=ini section=info file=config.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
   tasks:
@@ -18,6 +20,7 @@
     - debug: msg={{result}}
     - debug: msg={{key1}} # inventory 中定义
     - debug: msg="local cmd2 var:{{cmd2}}"
+    - debug: msg="local var4:{{var4}}"
     - debug: msg="local env var:{{server_name}}"
     - debug: msg={{lookup('env', 'PATH', 'HOME', 'SHELL')}}
     - debug: msg="hostname:{{ansible_hostname}}"

@@ -1,14 +1,26 @@
 ---
+# 以来目标机器有 export SERVER_NAME=www.stamhe.com 环境变量
 - hosts: hk
   remote_user: root
   vars:
     - disk_name: "stamhe-disk"
+    - img_block_path: "/dev/mapper/{{disk_name}}"
     - img_path: "/root"
     - img_name: "data.img"
     - img_size: "3G"
-    - img_pass: "{{lookup('ini', 'img_pass type=ini section=vpsinfo file=vpsinfo.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
+    - img_pass: "{{lookup('ini', 'img_pass type=ini section=vpsinfo file=vps-config.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
     - data_path: "/data"
   tasks:
+    - name: check-bbr-task
+      tags: check-bbr-task
+      shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"
+      register: bbr_rsp
+      ignore_errors: true # 忽略错误信息, 因为可能没有需要的输出
+    - name: add-bbr-task
+      tags: add-bbr-task
+      shell: "echo 'net.core.default_qdisc=fq' >> /etc/sysctl.conf; echo 'net.ipv4.tcp_congestion_control=bbr' >> /etc/sysctl.conf; sysctl -p"
+      when:
+        - '"bbr" not in bbr_rsp.stdout'
     - name: apt-update-task
       tags: apt-update-task
       apt: "update_cache=yes cache_valid_time=3600"
@@ -57,12 +69,17 @@
       tags: ufw-enable-task
       expect:
         command: "ufw enable"
-        timeout: 5
+        timeout: 10
         # 在responses下关键是一个python正则表达式匹配，不区分大小写的搜索用前缀 ?i
         responses:
           (?i)Proceed with operation: "y"
       when: 
         - '"inactive" in ufw_result.stdout'
+    - name: img-check-task
+      tags: img-check-task
+      shell: "df -hT"
+      register: img_check_result
+      failed_when: 'img_block_path in img_check_result.stdout' # 当 img 处于挂载状态时，不执行.
     - name: img-create-task
       tags: img-create-task
       shell: "fallocate -l {{img_size}} {{img_path}}/{{img_name}}"
@@ -70,7 +87,7 @@
       tags: img-luks-format-task
       expect:
         command: "cryptsetup luksFormat {{img_path}}/{{img_name}}"
-        timeout: 300
+        timeout: 900
         responses:
           (?i)Type uppercase yes: "YES"
           (?i)in capital letters: "YES"
@@ -80,12 +97,12 @@
       tags: img-luks-open-task
       expect:
         command: "cryptsetup open {{img_path}}/{{img_name}} {{disk_name}}"
-        timeout: 300
+        timeout: 900
         responses:
           (?i)Enter passphrase for: "{{img_pass}}"
     - name: img-luks-mkfs-task
       tags: img-luks-mkfs-task
-      shell: "mkfs.ext4 /dev/mapper/{{disk_name}}"
+      shell: "mkfs.ext4 {{img_block_path}}"
     - name: img-luks-partprobe-task
       tags: img-luks-partprobe-task
       shell: "partprobe"
@@ -93,12 +110,12 @@
       shell: "mkdir -p {{data_path}}"
     - name: img-luks-mount-task
       tags: img-luks-mount-task
-      shell: "mount /dev/mapper/{{disk_name}} {{data_path}}"
+      shell: "mount {{img_block_path}} {{data_path}}"
     - name: mkdir-batch-task
       shell: "mkdir -p /data/logs/nginx /data/shell /data/tmp"
     - name: sync-batch-task
       tags: sync-batch-task
-      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes"
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
       loop:
         - {src: "~/.screenrc", dest: "~/"}
         - {src: "~/.vimrc", dest: "~/"}
@@ -125,13 +142,16 @@
         - {src: "test2.json.j2", dest: "/data/conf/test2.json"}
         - {src: "tmp/test3.json.j2", dest: "/data/conf/test3.json"}
       notify: 
+        - reload-nginx-handler
         - reload-supervisor-handler
         - restart-fail2ban-handler
+        - restore-cron-handler
     - name: check-nginx-conf-task
       shell: "/usr/sbin/nginx -t"
     - name: check-nginx-active-task
       shell: "systemctl is-active nginx"
       register: ngx_result
+      ignore_errors: true # 忽略错误信息, 忽略错误输出
     - name: reload-nginx-task
       shell: "systemctl reload nginx"
       when: 
@@ -141,7 +161,14 @@
       when: 
         - ngx_result.rc !=  0
   handlers:
+    - name: reload-supervisor-handler
+      shell: "systemctl restart supervisor && sleep 5 && /usr/bin/supervisorctl update"
+    - name: reload-nginx-handler
+      shell: "systemctl reload nginx"
+      ignore_errors: true # 忽略错误信息
     - name: restart-fail2ban-handler
       shell: "systemctl restart fail2ban"
-    - name: reload-supervisor-handler
-      shell: "/usr/bin/supervisorctl update && /usr/bin/supervisorctl restart all"
+      ignore_errors: true # 忽略错误信息
+    - name: restore-cron-handler
+      shell: "crontab < /data/conf/crontab-slave.txt"
+      ignore_errors: true # 忽略错误信息

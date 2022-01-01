@@ -4,16 +4,19 @@
 # failed_when:当执行失败后，会将信息存在register的 stdout 中，通过判断指定的字符是否在 stdout 中来确定是否真的失败
 - hosts: hk
   remote_user: root
+  vars:
+    - key101: "value101"
+    - key102: "value102"
   tasks:
     - name: test-failed-when-task
-      shell: echo "has a failed word"
+      shell: echo "has a {{key101}} word"
         #ignore_errors: yes
       register: result
-      failed_when: "'failed' in result.stdout"
+      failed_when: "key101 in result.stdout" # stdout 含有变量 key101 的值，则任务 fail
+        #failed_when: "'value101' in result.stdout" # stdout 含有变量 key101 的值，则任务 fail
       #failed_when: false 不满足条件,任务正常执行
       #failed_when: true 满足条件,任务失败
       # 任务的failed_when已经满足了，所以就此停止playbook的运行了，下面的task任务也不会执行了！
       # failed_when其实是ansible的一种错误处理机制，是由fail模块使用了when条件语句的组合效果。
       # 当failed_when关键字对应的条件成立时，failed_when会将对应的任务的执行状态设置为失败，以停止playbook的运行！
-    - name: debug-continue-task
-      debug: msg="echo failed_when continue"
+    - debug: msg={{result}}

@@ -1,0 +1,18 @@
+---
+- hosts: hk
+  remote_user: root
+  vars:
+    - cron_filename: "/data/conf/crontab-slave.txt"
+  tasks:
+    - name: cron-empty-task
+      shell: "touch /tmp/empty.txt; crontab < /tmp/empty.txt"
+    - name: sync-batch-task
+      tags: sync-batch-task
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
+      loop:
+        - {src: "{{cron_filename}}", dest: "/tmp/"}
+    - name: cron-batch-task
+      shell: "crontab < {{cron_filename}}"
+      register: result
+    - name: cron-batch-debug-task
+      debug: msg={{result}}

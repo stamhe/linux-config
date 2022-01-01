@@ -6,4 +6,4 @@
   tasks:
     - name: with-lines
       debug: msg={{item}}
-      with_lines: ps -ef|grep xray
+      with_lines: ps -ef|grep nginx

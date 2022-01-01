@@ -1,0 +1,59 @@
+---
+- hosts: myvps
+  remote_user: root
+  vars:
+    - disk_name: "stamhe-disk"
+    - img_block_path: "/dev/mapper/{{disk_name}}"
+    - img_path: "/root"
+    - img_name: "data.img"
+    - img_size: "3G"
+    - img_pass: "{{lookup('ini', 'img_pass type=ini section=vpsinfo file=vps-config.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
+    - data_path: "/data"
+  tasks:
+    - name: check-bbr-task
+      tags: check-bbr-task
+      shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"
+      register: bbr_rsp
+      ignore_errors: true # 忽略错误信息, 因为可能没有需要的输出
+    - name: add-bbr-task
+      tags: add-bbr-task
+      shell: "echo 'net.core.default_qdisc=fq' >> /etc/sysctl.conf; echo 'net.ipv4.tcp_congestion_control=bbr' >> /etc/sysctl.conf; sysctl -p"
+      when:
+        - '"bbr" not in bbr_rsp.stdout'
+    - name: img-check-task
+      tags: img-check-task
+      shell: "df -hT"
+      register: img_check_result
+      failed_when: 'img_block_path in img_check_result.stdout' # 当 img 处于挂载状态时，不执行.
+    - name: img-luks-open-task
+      tags: img-luks-open-task
+      expect:
+        command: "cryptsetup open {{img_path}}/{{img_name}} {{disk_name}}"
+        timeout: 300
+        responses:
+          (?i)Enter passphrase for: "{{img_pass}}"
+    - name: img-luks-mount-task
+      tags: img-luks-mount-task
+      shell: "mount {{img_block_path}} {{data_path}}"
+      notify: 
+        - reload-supervisor-handler
+        - restart-fail2ban-handler
+    - name: check-nginx-conf-task
+      shell: "/usr/sbin/nginx -t"
+    - name: check-nginx-active-task
+      shell: "systemctl is-active nginx" # 小技巧，有时候前面的命令执行失败，但是有需要 rc = 0 ，也需要错误信息，可以在最后加工 cat 
+      register: ngx_result
+      ignore_errors: true # 忽略错误信息, 因为可能 /data 没有开机挂载导致nginx service 加载失败了
+    - name: reload-nginx-task
+      shell: "systemctl reload nginx"
+      when: 
+        - ngx_result.rc ==  0
+    - name: start-nginx-task
+      shell: "systemctl start nginx"
+      when: 
+        - ngx_result.rc !=  0
+  handlers:
+    - name: restart-fail2ban-handler
+      shell: "systemctl restart fail2ban"
+    - name: reload-supervisor-handler
+      shell: "/usr/bin/supervisorctl update"

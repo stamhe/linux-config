@@ -1,13 +1,21 @@
 ---
 - hosts: hk
   remote_user: root
-  gather_facts: false
+    #  gather_facts: false
   tasks:
-    - name: test-cmd
-      shell: "date"
-      tags: mytag
+    - name: test-cmd-task
+      tags: test-cmd-task
+      shell: "date;pwd;"
       register: result
-      ignore_errors: true # 忽略错误信息
-    - debug: msg={{result}} {{key1}} {{key2}}
-    - debug: msg={{key1}}
-
+    - debug: msg={{result}}
+    - name: check-bbr-task
+      tags: check-bbr-task
+      shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"
+      register: bbr_rsp
+      ignore_errors: true # 忽略错误信息, 因为可能没有需要的输出
+    - debug: msg={{bbr_rsp}}
+    - name: add-bbr-task
+      tags: add-bbr-task
+      shell: "echo 'net.core.default_qdisc=fq' >> /etc/sysctl.conf; echo 'net.ipv4.tcp_congestion_control=bbr' >> /etc/sysctl.conf; sysctl -p"
+      when:
+        - '"bbr" not in bbr_rsp.stdout'

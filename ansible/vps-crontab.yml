@@ -1,0 +1,17 @@
+---
+- hosts: myvps
+  remote_user: root
+  vars:
+    - cron_filename: "/data/conf/crontab-slave.txt"
+  tasks:
+    - name: sync-batch-task
+      tags: sync-batch-task
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
+      loop:
+        - {src: "{{cron_filename}}", dest: "{{cron_filename}}"}
+        - {src: "/data/shell/clear_logs.sh", dest: "/data/shell/"}
+    - name: cron-batch-task
+      shell: "crontab < {{cron_filename}}"
+      register: result
+    - name: cron-batch-debug-task
+      debug: msg={{result}}

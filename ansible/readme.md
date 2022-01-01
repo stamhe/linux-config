@@ -8,8 +8,14 @@ https://www.stamhe.com/?p=1115
 
 资料
 http://www.linuxe.cn/post-273.html
+https://www.junmajinlong.com/ansible/index/
+https://coconutmilktaro.top/2018/Ansible%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0
+
 https://my.oschina.net/kangvcar/blog/1830155
 https://www.cnblogs.com/xuanlv-0413/p/14815170.html
+
+when
+https://www.cnblogs.com/breezey/p/10996632.html
 
 
 apt install ansible -y
@@ -142,7 +148,7 @@ ansible hk -m cron -a "minute=0 hour=0 day=* month=* weekday=* name='Ntpdate ser
 
 
 synchronize 模块 - 依赖 rsync 软件包，必须安装 rsync
-archive 默认yes, 是否采用归档模式同步，即以源文件相同属性同步到目标地址。由于模块默认启用了archive参数，该参数默认开启了recursive, links, perms, times, owner，group, checksum和-D参数。如果你将该参数设置为no，那么你将停止很多参数，比如会导致如下目的递归失败，导致无法拉取。注意：partial 没有默认开启.
+archive 默认yes, 是否采用归档模式同步，即以源文件相同属性同步到目标地址。由于模块默认启用了archive参数，该参数默认开启了recursive, links, perms, times, owner，group和 -D 参数。如果你将该参数设置为no，那么你将停止很多参数，比如会导致如下目的递归失败，导致无法拉取。注意：partial 没有默认开启.
 delete=yes 默认no, 使两边的内容一样（即以推送方为主）,删除源中没有但目标存在的文件，使两边内容一样，以推送方为主
 compress=yes 开启压缩，默认为 yes
 checksum=yes 检测sum值，防止文件篡改，默认 no
@@ -162,7 +168,7 @@ dest_port   Port number for ssh on the destination host.Prior to Ansible 2.0, th
 partial     默认no, 等价于"--partial"选项。默认rsync在传输中断时会删除传输了⼀半的⽂件，指定该选项将保留这部分不完整的⽂件，使得下次传输时可以直接从未完成的数据块开始传输。
 
 ansible hk -m synchronize -a "src=/data/tmp/ dest=/data/tmp/ partial=yes"
-ansible hk -m synchronize -a "src=/tmp dest=/mnt compress=yes delete=yes archive=yes rsync_opts=--exclude=*.log partial=yes"
+ansible hk -m synchronize -a "src=/tmp dest=/mnt rsync_opts=--exclude=*.log partial=yes delete=yes checksum=yes"
 ansible hk -m synchronize -a 'src=time.sh dest=/tmp/'
 
 
@@ -348,6 +354,8 @@ ansible-playbook playbookname.yml --list-tasks #列出该playbook中的任务
 ansible-playbook playbookname.yml --list-tags #列出该playbook中的tags
 ansible-playbook --syntax-check nginx_tags.yaml 
 
+ansible-playbook temp2nginx.yml  --limit 192.168.1.100 目标主机只执行某一台, 但是必须是主机清单这个文件指定的这个组的ip才可以
+
 # --check | -C：只检测可能会发生的改变，但不真正执行操作
 # --list-hosts：列出运行任务的主机
 # --list-tags：列出playbook文件中定义的所有tags
@@ -491,12 +499,6 @@ tasks:
 Ansible template使用方法
 多数情况下都会建立一个templates目录并和playbook同级，这样playbook可以直接引用和寻找这个模板文件，如果在别的路径需要单独指定。模板文件后缀名为.j2
 cp /etc/nginx/nginx.conf templates/nginx.conf/j2
-
-=====================================================================
-
-执行
-执行：目标主机只执行某一台, 但是必须是主机清单这个文件指定的这个组的ip才可以
-ansible-playbook temp2nginx.yml  --limit 192.168.1.100
 
 ```
 

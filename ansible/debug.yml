@@ -1,0 +1,28 @@
+---
+- hosts: hk
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: test debug
+      shell: "date"
+      tags: mytag # 特殊tags：always #无论如何都会运行
+      #sudo_user: root
+      #sudo: yes
+      register: result
+    - name: test-debug-output
+      debug: msg={{result}}
+    - name: test-fail-output
+      fail: msg="interrupt running playbook"
+
+- hosts: hk2
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: test debug
+      tags: mytag2
+      shell: "pwd"
+      #sudo_user: root
+      #sudo: yes
+      register: result
+    - name: test-debug-output2
+      debug: msg={{result}}

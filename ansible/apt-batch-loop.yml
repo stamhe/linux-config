@@ -1,0 +1,12 @@
+---
+- hosts: hk
+  remote_user: root
+  tasks:
+    - name: apt-batch-task
+      apt: "name={{item}} state=present"
+      register: result
+      loop:
+        - zip
+        - unzip
+    - name: apt-batch-debug-task
+      debug: msg={{result}}

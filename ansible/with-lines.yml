@@ -1,0 +1,9 @@
+---
+# with_lines 逐行处理
+- hosts: hk
+  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: with-lines
+      debug: msg={{item}}
+      with_lines: ps -ef|grep xray

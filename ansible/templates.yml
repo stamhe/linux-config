@@ -1,0 +1,25 @@
+---
+- hosts: hk
+  remote_user: root
+    #gather_facts: false # 要使用远程环境变量，这个数据必须要
+  tasks:
+    - name: test-template
+      template: "src={{item.src}} dest={{item.dest}}" # 使用模板
+      loop:
+        - {src: "test.conf.j2", dest: "/data/tmp/test.conf"}
+        - {src: "test2.conf.j2", dest: "/data/tmp/test2.conf"}
+        - {src: "tmp/test3.conf.j2", dest: "/data/tmp/test3.conf"}
+      register: result
+      notify: 
+        - reload-nginx # 当这个任务执行状态发生改变时，触发handlers执行
+        - debug-nginx # 当这个任务执行状态发生改变时，触发handlers执行
+    - name: test-cmd
+      shell: "date"
+      register: result2
+    - name: test-template-debug
+      debug: msg={{result2}}
+  handlers:
+    - name: reload-nginx
+      service: name=nginx state=reloaded
+    - name: debug-nginx
+      debug: msg={{result}}

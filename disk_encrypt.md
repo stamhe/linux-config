@@ -168,3 +168,56 @@ shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sdb
 sysctl --write vm.drop_caches=3
 ```
 
+### 调整 dm-crypt/luks 加密分区磁盘大小(好像不支持luks2)
+```
+apt install qemu-utils
+
+https://www.qemu.org/docs/master/system/qemu-block-drivers.html?highlight=luks#cmdoption-image-formats-arg-luks
+
+以 fallocate -l 10G test.img 创建的 raw 格式磁盘镜像为例子，磁盘格式为 ext4
+
+----------------------------------------------------------------
+先缩小 ext4 分区的大小
+调整分区 1 的大小到 3G
+cryptsetup open test.img test-disk
+
+检查要调整的分区, 可以加 -y 一直默认确认
+e2fsck -f /dev/mapper/test-disk1
+
+
+调整分区文件系统到 3G
+resize2fs /dev/mapper/test-disk1 3G
+
+调整分区
+fdisk /dev/mapper/test-disk
+p 打印已经有的分区
+d 删除原来的分区 1
+n 新建一个分区 1，参数基本都默认，除了结束大小必须写【+3G】
+w 保存新分区
+
+重载分区表
+partprobe /dev/mapper/test-disk
+
+再次检查分区
+e2fsck -f /dev/mapper/test-disk1
+
+【不要重新格式化】，直接 mount 即可
+
+----------------------------------------------------------------
+调整镜像文件的大小
+镜像文件的信息
+qemu-img info test.img
+
+镜像文件增加 +1G 空间
+qemu-img resize test.img +1G
+
+减小 1G
+qemu-img resize test.img -1G
+
+对 luks 加密镜像增加 +1G 空间(好像不支持luks2)
+qemu-img resize  --object secret,id=idname1,data=123456  --image-opts driver=luks,file.filename=test.img,key-secret=idname1 +1G
+
+
+
+```
+

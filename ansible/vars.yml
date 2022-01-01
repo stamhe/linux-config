@@ -1,0 +1,29 @@
+---
+- hosts: hk
+  remote_user: root
+    #  gather_facts: false  # 如果要使用远程机器的环境变量，这个数据必须要有.
+  vars:
+    - cmd1: date
+    - cmd2: pwd
+    - server_name: "{{lookup('env', 'SERVER_NAME')}}"  # 获取在控制主机上的某个环境变量的值
+    - server: "{{lookup('ini', 'server type=ini section=info file=config.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
+  tasks:
+    - name: test-cmd
+      shell: "{{cmd1}}"
+      environment: # 预定于环境变量 
+        http_proxy: http://127.0.0.1:1089
+      tags: mytag
+      register: result
+      ignore_errors: true # 忽略错误信息
+    - debug: msg={{result}}
+    - debug: msg={{key1}} # inventory 中定义
+    - debug: msg="local cmd2 var:{{cmd2}}"
+    - debug: msg="local env var:{{server_name}}"
+    - debug: msg={{lookup('env', 'PATH', 'HOME', 'SHELL')}}
+    - debug: msg="hostname:{{ansible_hostname}}"
+    - debug: msg="remote home:{{ansible_env.HOME}}"
+    - debug: msg="remote var server_name:{{ansible_env.SERVER_NAME}}" # ubuntu .bashrc 前面添加
+    - debug: msg="os_family:{{ansible_os_family}}"
+    - debug: msg="ini var server:{{server}}"
+    - debug: msg="cmd-2 var:{{cmd2}}"
+

@@ -1,0 +1,9 @@
+---
+- hosts: hk
+  remote_user: root
+  tasks:
+    - name: command batch
+      shell: "{{item.cmd}} > {{item.logname}}"
+      loop:
+        - {cmd: "date", logname: "/tmp/date.log"}
+        - {cmd: "ls ~/", logname: "/tmp/ls.log"}

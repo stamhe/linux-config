@@ -164,6 +164,17 @@ tls://1.1.1.1 cloudflare
 tls://1.0.0.1 cloudflare
 tls://[2606:4700:4700::1111] cloudflare
 tls://[2606:4700:4700::1001] cloudflare
+
+
+ipv6 dns
+2001:4860:4860::8888    google
+2001:4860:4860::8844    google
+
+2606:4700:4700::1111    cloudflare
+2606:4700:4700::1001    cloudflare
+
+
+
 ```
 
 ### Linux 命令行代理

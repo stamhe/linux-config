@@ -1,0 +1,33 @@
+---
+# failed_when：关键字的作用是在条件成立时，将对应任务的执行状态设置为失败！
+# changed_when：关键字的作用是在条件成立时，将对应任务的执行状态设置为changed！
+# when条件判断：只条满足when的条件时才执行对应的tasks
+# when语句可以实现条件测试。如果需要根据变量、facts或此前任务的执行结果来做为某task执行与否的前提时要用到条件测试,通过在task后添加when子句即可使用条件测试
+# 需要注意：when关键字后面跟着的是python的表达式,在表达式中我们能够使用任何的变量或者facts
+# when条件判断之引用变量
+#  正确的引用方式：将{{}} or {% %} 改为()
+#  错误写法示例：when: ansible_default_ipv4.address == {{ webserver01 }}
+#  正确写法示例：when: ansible_default_ipv4.address == (webserver01)
+
+#  changed_when：先执行task,并对task返回的值进行判断，当满足changed_when指定的条件时才将主机状态标记为 changed
+#  需要注意：默认情况下执行了命令的主机状态都为changed，本例对输出进行判断，包含是某个指定字符才能为changed; 
+- hosts: hk
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: check nginx service
+      shell: "nginx -t"
+      register: ngx_result
+      notify: reload-nginx # 当这个任务执行状态发生改变时，触发handlers执行
+      changed_when: # 'changed_when’关键字的作用是在条件成立时，将对应任务的执行状态设置为changed,  当task真正执行后状态变为 change时候 handler下的task生效
+        #如果执行结果中有successful字符串,则继续执行,如果没有则停止向下执行
+        - (ngx_result.stdout.find('successful'))  
+        - '"successful" in ngx_result.stdout'
+        - false   #nginx -t 每次成功执行是changed状态,关闭此changed状态. 则 notify 不会触发 handler
+        - 2 < 1
+    - name: start-nginx
+      service: name=nginx state=started
+    - debug: msg={{ngx_result}}
+  handlers:
+    - name: reload-nginx
+      service: name=nginx state=reloaded

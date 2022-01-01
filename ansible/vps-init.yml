@@ -1,0 +1,146 @@
+---
+- hosts: hk
+  remote_user: root
+  vars:
+    - disk_name: "stamhe-disk"
+    - img_path: "/root"
+    - img_name: "data.img"
+    - img_size: "3G"
+    - img_pass: "{{lookup('ini', 'img_pass type=ini section=vpsinfo file=vpsinfo.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
+    - data_path: "/data"
+  tasks:
+    - name: apt-update-task
+      tags: apt-update-task
+      apt: "update_cache=yes cache_valid_time=3600"
+    - name: apt-upgrade-task
+      tags: apt-upgrade-task
+      apt: "upgrade=yes"
+    - name: apt-install-batch-task
+      tags: apt-install-batch-task
+      apt: "name={{item}} state=present"
+      loop:
+        - lrzsz
+        - screen
+        - tmux
+        - nginx
+        - supervisor
+        - fail2ban
+        - dstat
+        - ntp
+        - ntpdate
+        - rsync
+        - certbot
+        - mtr
+        - lsof
+        - curl
+        - cryptsetup
+        - zip
+        - unzip
+        - iftop
+        - traceroute
+        - ufw
+        - python3-pexpect
+    - name: ufw-allow-task
+      tags: ufw-allow-task
+      shell: "ufw allow {{item}}"
+      loop:
+        - 22
+        - 80
+        - 443
+        - 389
+        - 554
+    - name: ufw-check-active-task
+      tags: ufw-check-active-task
+      shell: "ufw status"
+      register: ufw_result
+    - name: ufw-enable-task
+      tags: ufw-enable-task
+      expect:
+        command: "ufw enable"
+        timeout: 5
+        # 在responses下关键是一个python正则表达式匹配，不区分大小写的搜索用前缀 ?i
+        responses:
+          (?i)Proceed with operation: "y"
+      when: 
+        - '"inactive" in ufw_result.stdout'
+    - name: img-create-task
+      tags: img-create-task
+      shell: "fallocate -l {{img_size}} {{img_path}}/{{img_name}}"
+    - name: img-luks-format-task
+      tags: img-luks-format-task
+      expect:
+        command: "cryptsetup luksFormat {{img_path}}/{{img_name}}"
+        timeout: 300
+        responses:
+          (?i)in capital letters: "YES"
+          (?i)Enter passphrase for: "{{img_pass}}"
+          (?i)Verify passphrase: "{{img_pass}}"
+    - name: img-luks-open-task
+      tags: img-luks-open-task
+      expect:
+        command: "cryptsetup open {{img_path}}/{{img_name}} {{disk_name}}"
+        timeout: 300
+        responses:
+          (?i)Enter passphrase for: "{{img_pass}}"
+    - name: img-luks-mkfs-task
+      tags: img-luks-mkfs-task
+      shell: "mkfs.ext4 /dev/mapper/{{disk_name}}"
+    - name: img-luks-partprobe-task
+      tags: img-luks-partprobe-task
+      shell: "partprobe"
+    - name: mkdir-data-task
+      shell: "mkdir -p {{data_path}}"
+    - name: img-luks-mount-task
+      tags: img-luks-mount-task
+      shell: "mount /dev/mapper/{{disk_name}} {{data_path}}"
+    - name: mkdir-batch-task
+      shell: "mkdir -p /data/logs/nginx /data/shell /data/tmp"
+    - name: sync-batch-task
+      tags: sync-batch-task
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes"
+      loop:
+        - {src: "~/.screenrc", dest: "~/"}
+        - {src: "~/.vimrc", dest: "~/"}
+        - {src: "~/.tmux.conf", dest: "~/"}
+        - {src: "~/.mytmux.conf", dest: "~/"}
+        - {src: "/etc/letsencrypt", dest: "/etc/"}
+        - {src: "/data/conf/nginx/", dest: "/etc/nginx/conf.d/"}
+        - {src: "/data/conf/nginx.conf", dest: "/etc/nginx/nginx.conf"}
+        - {src: "/data/conf", dest: "/data/"}
+        - {src: "/data/app", dest: "/data/"}
+        - {src: "/data/shell", dest: "/data/"}
+        - {src: "/usr/share/nginx/html/", dest: "/usr/share/nginx/html/"}
+        - {src: "/etc/fail2ban/filter.d/nginx-filter.conf", dest: "/etc/fail2ban/filter.d/"}
+        - {src: "/etc/fail2ban/filter.d/nginx-ext-filter.conf", dest: "/etc/fail2ban/filter.d/"}
+        - {src: "/data/conf/fail2ban/jail.local.node", dest: "/etc/fail2ban/jail.local"}
+        - {src: "/data/conf/slave/supervisord.conf", dest: "/etc/supervisor/supervisord.conf"}
+    - name: xray-templates-batch-task
+      tags: xray-templates-batch-task
+      template: "src={{item.src}} dest={{item.dest}}"
+      register: result
+      loop:
+        # 相对路径是跟 yml 同级的 templates 目录下的子目录
+        - {src: "test.json.j2", dest: "/data/conf/test.json"}
+        - {src: "test2.json.j2", dest: "/data/conf/test2.json"}
+        - {src: "tmp/test3.json.j2", dest: "/data/conf/test3.json"}
+      notify: 
+        - reload-supervisor-handler
+        - restart-fail2ban-handler
+    - name: check-nginx-conf-task
+      shell: "/usr/sbin/nginx -t"
+    - name: check-nginx-active-task
+      shell: "systemctl is-active nginx"
+      register: ngx_result
+    - name: reload-nginx-task
+      shell: "systemctl reload nginx"
+      when: 
+        - ngx_result.rc ==  0
+    - name: start-nginx-task
+      shell: "systemctl start nginx"
+      when: 
+        - ngx_result.rc !=  0
+  handlers:
+    - name: restart-fail2ban-handler
+      shell: "systemctl restart fail2ban"
+    - name: reload-supervisor-handler
+      shell: "/usr/bin/supervisorctl update && /usr/bin/supervisorctl restart all"

@@ -1,0 +1,10 @@
+---
+- hosts: hk
+  remote_user: root
+  tasks:
+    - name: sync-batch
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes"
+      loop:
+        - {src: "/data/conf/", dest: "/data/tmp/"}
+        - {src: "/data/ssl", dest: "/data/tmp/"}
+        - {src: "/data/conf/fail2ban/jail.local.node", dest: "/data/tmp/jail.local"}

@@ -1,0 +1,23 @@
+---
+- hosts: hk
+  remote_user: root
+  tasks:
+    - name: expect-task
+      tags: expect-task
+      expect:
+        # 如果你想通过shell运行一个命令（比如你正在使用<,>,|等），你必须在命令中指定一个shell，比如/bin/bash -c "/path/to/something | grep else"
+        command: "cryptsetup luksFormat /data/tmp/test.img"
+        echo: yes
+        timeout: 3600
+        # 在responses下关键是一个python正则表达式匹配，不区分大小写的搜索用前缀 ?i
+        responses:
+          #(?i)'Proceed with operation': "y"
+          #(i)'Proceed with operation': "y"
+          (?i)Proceed with operation: "y"
+          (?i)Password: "123456"
+          (?i)in capital letters: "YES"
+          (?i)Enter passphrase for: "123456"
+          (?i)Verify passphrase: "123456"
+      register: result
+    - name: expect-debug-task
+      debug: msg={{result}}

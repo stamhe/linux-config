@@ -1,0 +1,22 @@
+---
+# when条件判断：只条满足when的条件时才执行对应的tasks
+# when语句可以实现条件测试。如果需要根据变量、facts或此前任务的执行结果来做为某task执行与否的前提时要用到条件测试,通过在task后添加when子句即可使用条件测试
+# 需要注意：when关键字后面跟着的是python的表达式,在表达式中我们能够使用任何的变量或者facts
+# when条件判断之引用变量
+#  正确的引用方式：将{{}} or {% %} 改为()
+#  错误写法示例：when: ansible_default_ipv4.address == {{ webserver01 }}
+#  正确写法示例：when: ansible_default_ipv4.address == (webserver01)
+- hosts: hk
+  remote_user: root
+  tasks:
+    - name: check-nginx-task
+      shell: "systemctl is-active nginx"
+      #shell: "nginx -t"
+      register: ngx_result
+    - name: reload-nginx-task # 如果check nginx执行命令结果成功,即check_nginx.rc等于0，则执行 reload nginx,否则跳过
+      service: name=nginx state=reloaded
+      when: 
+        - ngx_result.rc ==  0
+    - block:
+      - debug: msg="stamhe-debug-msg"
+      - debug: msg={{ngx_result}}

@@ -1,0 +1,14 @@
+---
+# until为false时才会执行循环,为true则退出循环
+- hosts: hk
+  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: apt batch
+      apt: "name={{item}} state=present"
+      loop:
+        - zip
+        - unzip
+      until: false
+      delay: 1
+      retries: 3 # 默认值 3 次

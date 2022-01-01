@@ -1,0 +1,18 @@
+---
+# when语句可以实现条件测试。如果需要根据变量、facts或此前任务的执行结果来做为某task执行与否的前提时要用到条件测试,通过在task后添加when子句即可使用条件测试
+- hosts: hk
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: check-nginx-service
+      command: "nginx -t"
+      register: ngx_result
+      force_handlers: yes # 通常情况下，当 task 失败后， playbook 将会终止，任何在前面已经被 tasks notify 的 handlers 都不会被执行。如果你在 playbook 中设置了 force_handlers: yes 参数，被通知的 handlers 就会被强制执行
+      notify: 
+        - reload-nginx # 当这个任务执行状态发生改变时，触发handlers执行
+        - debug-nginx # 当这个任务执行状态发生改变时，触发handlers执行
+  handlers:
+    - name: reload-nginx
+      service: name=nginx state=reloaded
+    - name: debug-nginx
+      debug: msg={{ngx_result}}

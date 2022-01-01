@@ -1,0 +1,13 @@
+---
+- hosts: hk
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: test-cmd
+      shell: "date"
+      tags: mytag
+      register: result
+      ignore_errors: true # 忽略错误信息
+    - debug: msg={{result}} {{key1}} {{key2}}
+    - debug: msg={{key1}}
+

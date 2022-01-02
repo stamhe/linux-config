@@ -3,7 +3,10 @@
 其实最早在 2013 年就玩过 ansible 了，这次重新系统的再学习一次，毕竟好多年了，而且2013年的时候，ansible 刚出来
 https://www.stamhe.com/?p=1115
 
-！！！主要示例看 vps-init.yml 即可！！！
+
+！！！主要示例看 letsencrypt-acme.yml 即可！！！ TLS证书申请不要用 ansible 原始带的模块，又难用又复杂.
+！！！主要示例看 vps-init.yml 即可！！！     全自动化初始安装全新的 server 
+
 
 
 资料

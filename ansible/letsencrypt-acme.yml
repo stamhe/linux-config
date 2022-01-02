@@ -26,7 +26,8 @@
         responses:
           (?i)yes: "yes"
           (?i)Are you sure you want to continue: "yes"
-      register: ssh_result
+      register: ssh_ack_result
+    - debug: msg={{ssh_ack_result}}
     - name: apt-update-task
       tags: apt-update-task
       apt: "update_cache=yes cache_valid_time=3600"
@@ -45,8 +46,6 @@
         - zip
         - unzip
         - python3-pexpect
-    - name: ssh-ack-debug-task
-      debug: msg={{ssh_result}}
     - name: check-domain-local-task # ansible 主控机执行
       delegate_to: 127.0.0.1
       shell: "certbot  certificates -d {{domain_name}}"

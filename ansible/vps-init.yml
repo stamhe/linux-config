@@ -23,8 +23,7 @@
           (?i)yes: "yes"
           (?i)Are you sure you want to continue: "yes"
       register: ssh_result
-    - name: ssh-ack-debug-task
-      debug: msg={{ssh_result}}
+    - debug: msg={{ssh_result}}
     - name: check-bbr-task
       tags: check-bbr-task
       shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"

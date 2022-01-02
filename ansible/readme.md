@@ -4,8 +4,9 @@
 https://www.stamhe.com/?p=1115
 
 
-！！！主要示例看 letsencrypt-acme.yml 即可！！！ TLS证书申请不要用 ansible 原始带的模块，又难用又复杂.
-！！！主要示例看 vps-init.yml 即可！！！     全自动化初始安装全新的 server 
+！！！主要示例看 letsencrypt-acme.yml 即可！！！ TLS证书申请不要用 ansible 原始带的模块，又难用又复杂，可以批量全自动申请.certbot 不能并行，ansible 执行要带 -f 1 保证串行执行.
+！！！主要示例看 vps-init.yml 即可！！！     全自动化初始安装全新的 server.
+！！！主要看 letsencrypt-acme-renew.yml 即可！！！ TLS 证书的自动更新，可以批量全自动更新. certbot 不能并行，ansible 执行要带 -f 1 保证串行执行.
 
 
 

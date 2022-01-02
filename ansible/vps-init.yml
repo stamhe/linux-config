@@ -1,7 +1,7 @@
 ---
 # 此脚本里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
 # 目标机器的环境变量  export SERVER_NAME=test100.stamhe.com
-- hosts: hk
+- hosts: myvps
   remote_user: root
   vars:
     - domain_name: "{{ansible_env.SERVER_NAME}}"
@@ -14,7 +14,7 @@
     - data_path: "/data"
   tasks:
     - name: ssh-ack-local-task # ansible 主控机执行
-      tags: ssh-ack-task
+      tags: ssh-ack-local-task
       delegate_to: 127.0.0.1
       expect:
         command: 'ssh -i /data/ssh/id_rsa -o ConnectTimeout=10 root@{{domain_name}} "whoami"'

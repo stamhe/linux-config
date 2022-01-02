@@ -1,5 +1,5 @@
 ---
-# 自动生成，部署证书
+# 自动更新证书
 # certbot certonly --manual -w /data/www/common -d test100.stamhe.com
 # certbot certonly --manual --manual-auth-hook /data/shell/ssl_authorize.sh -w /data/www/common -d test100.stamhe.com
 # certbot certonly -w /data/www/common -d test100.stamhe.com

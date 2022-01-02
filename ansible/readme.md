@@ -388,6 +388,42 @@ ansible hk -m setup
 
 
 =====================================================================
+ansible 主控本机本地执行命令
+方式一：如果整个 playbook 都想在ansible local host 执行，那指定 hosts: 127.0.0.1 and connection:local
+注：你可以避免在 playbook 中输入 connection: local，把它添加到你的 ansible.cfg 中：
+localhost ansible_connection=local
+例如
+- name: a play that runs entirely on the ansible local host
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: check out a git repository
+    git: repo=git://foosball.example.org/path/to/repo.git dest=/local/path
+   
+方式二：如果只是想 playbook 的某一些任务在 ansible localhost 执行
+如果您只想在您的Ansible主机上运行单个任务，则可以使用local_action若要指定任务应在本地运行，请执行以下操作
+- name: an example playbook
+  hosts: webservers
+  tasks:
+  - ...
+
+  - name: check out a git repository
+    local_action: git repo=git://foosball.example.org/path/to/repo.git dest=/local/path
+
+
+方式三：以用来delegate_to在Ansible主机（管理主机）上运行Ansible播放的位置运行命令。例如：
+如果Ansible主机上已存在该文件，请删除该文件：
+ - name: Remove file if already exists
+   file:
+    path: /tmp/logfile.log
+    state: absent
+    mode: "u+rw,g-wx,o-rwx"
+   delegate_to: 127.0.0.1
+
+方式四: 
+ansible all -i "localhost," -c local -m shell -a 'echo hello world'
+
+=====================================================================
 变量
 register 把任务的输出定义为变量，然后用于其他任务，实例如下：
 tasks:

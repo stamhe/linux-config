@@ -1,8 +1,10 @@
 ---
-# 以来目标机器有 export SERVER_NAME=www.stamhe.com 环境变量
+# 此脚本里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
+# 目标机器的环境变量  export SERVER_NAME=test100.stamhe.com
 - hosts: hk
   remote_user: root
   vars:
+    - domain_name: "{{ansible_env.SERVER_NAME}}"
     - disk_name: "stamhe-disk"
     - img_block_path: "/dev/mapper/{{disk_name}}"
     - img_path: "/root"
@@ -11,6 +13,18 @@
     - img_pass: "{{lookup('ini', 'img_pass type=ini section=vpsinfo file=vps-config.ini')}}"  # 获取在控制主机上的某个环境变量的值 ini 文件
     - data_path: "/data"
   tasks:
+    - name: ssh-ack-local-task # ansible 主控机执行
+      tags: ssh-ack-task
+      delegate_to: 127.0.0.1
+      expect:
+        command: 'ssh -i /data/ssh/id_rsa -o ConnectTimeout=10 root@{{domain_name}} "whoami"'
+        timeout: 30 
+        responses:
+          (?i)yes: "yes"
+          (?i)Are you sure you want to continue: "yes"
+      register: ssh_result
+    - name: ssh-ack-debug-task
+      debug: msg={{ssh_result}}
     - name: check-bbr-task
       tags: check-bbr-task
       shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"
@@ -79,7 +93,7 @@
       tags: img-check-task
       shell: "df -hT"
       register: img_check_result
-      failed_when: 'img_block_path in img_check_result.stdout' # 当 img 处于挂载状态时，不执行.
+      failed_when: 'img_block_path in img_check_result.stdout' # 当 img 处于挂载状态时，中断所有任务执行
     - name: img-create-task
       tags: img-create-task
       shell: "fallocate -l {{img_size}} {{img_path}}/{{img_name}}"
@@ -112,7 +126,7 @@
       tags: img-luks-mount-task
       shell: "mount {{img_block_path}} {{data_path}}"
     - name: mkdir-batch-task
-      shell: "mkdir -p /data/logs/nginx /data/shell /data/tmp"
+      shell: "mkdir -p /data/logs/nginx /data/shell /data/tmp /data/app /data/conf > /dev/null 2>&1"
     - name: sync-batch-task
       tags: sync-batch-task
       synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
@@ -121,29 +135,34 @@
         - {src: "~/.vimrc", dest: "~/"}
         - {src: "~/.tmux.conf", dest: "~/"}
         - {src: "~/.mytmux.conf", dest: "~/"}
-        - {src: "/etc/letsencrypt", dest: "/etc/"}
-        - {src: "/data/conf/nginx/", dest: "/etc/nginx/conf.d/"}
-        - {src: "/data/conf/nginx.conf", dest: "/etc/nginx/nginx.conf"}
-        - {src: "/data/conf", dest: "/data/"}
-        - {src: "/data/app", dest: "/data/"}
-        - {src: "/data/shell", dest: "/data/"}
-        - {src: "/usr/share/nginx/html/", dest: "/usr/share/nginx/html/"}
+        - {src: "/data/conf/", dest: "/data/conf/"}
+        - {src: "/etc/nginx/nginx.conf", dest: "/etc/nginx/nginx.conf"}
         - {src: "/etc/fail2ban/filter.d/nginx-filter.conf", dest: "/etc/fail2ban/filter.d/"}
         - {src: "/etc/fail2ban/filter.d/nginx-ext-filter.conf", dest: "/etc/fail2ban/filter.d/"}
         - {src: "/data/conf/fail2ban/jail.local.node", dest: "/etc/fail2ban/jail.local"}
         - {src: "/data/conf/slave/supervisord.conf", dest: "/etc/supervisor/supervisord.conf"}
+    - name: sync-batch-delete-task
+      tags: sync-batch-delete-task
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes delete=yes"
+      loop:
+        - {src: "/etc/letsencrypt/", dest: "/etc/letsencrypt/"}
+        - {src: "/etc/nginx/conf.d/", dest: "/etc/nginx/conf.d/"}
+        - {src: "/etc/nginx/nginx.conf", dest: "/etc/nginx/nginx.conf"}
+        - {src: "/data/app/", dest: "/data/app/"}
+        - {src: "/data/shell/", dest: "/data/shell/"}
+        - {src: "/usr/share/nginx/html/", dest: "/usr/share/nginx/html/"}
     - name: xray-templates-batch-task
       tags: xray-templates-batch-task
       template: "src={{item.src}} dest={{item.dest}}"
       register: result
       loop:
-        # 相对路径是跟 yml 同级的 templates 目录下的子目录
+        # 此模板里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
         - {src: "test.json.j2", dest: "/data/conf/test.json"}
         - {src: "test2.json.j2", dest: "/data/conf/test2.json"}
         - {src: "tmp/test3.json.j2", dest: "/data/conf/test3.json"}
       notify: 
-        - reload-nginx-handler
         - reload-supervisor-handler
+        - reload-nginx-handler
         - restart-fail2ban-handler
         - restore-cron-handler
     - name: check-nginx-conf-task
@@ -151,7 +170,7 @@
     - name: check-nginx-active-task
       shell: "systemctl is-active nginx"
       register: ngx_result
-      ignore_errors: true # 忽略错误信息, 忽略错误输出
+      ignore_errors: true # 忽略错误信息
     - name: reload-nginx-task
       shell: "systemctl reload nginx"
       when: 

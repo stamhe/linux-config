@@ -20,7 +20,7 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/{{ansible_env.SERVER_NAME}}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ansible_env.SERVER_NAME}}/privkey.pem;
-    server_name {{ansible_env.SERVER_NAME}};
+    server_name www.stamhe.com;
 
     access_log  /data/logs/nginx/access_stamhe_com.log mylog;
     error_log /data/logs/nginx/error_stamhe_com.log;

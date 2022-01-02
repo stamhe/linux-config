@@ -13,7 +13,7 @@ server {
 server {
     listen 443 ssl http2;
 #ssl_protocols         TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-    ssl_protocols         TLSv1.3;
+ssl_protocols         TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:!NULL:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!CBC:!EDH:!kEDH:!PSK:!SRP:!kECDH:!RC4:!EXPORT:!EXP:!ADH:!SHA1:!DES:!CAMELLIA:HIGH;
     ssl_prefer_server_ciphers on;
     add_header Strict-Transport-Security "max-age=63072000" always;

@@ -1,0 +1,12 @@
+server {
+    listen 80;
+    server_name {{ansible_env.SERVER_NAME}};
+    location ^~ /.well-known/acme-challenge/ {
+        root /data/www/common;
+        try_files $uri =404;
+    }
+
+    location / {
+	    return 301 https://$host$request_uri;
+    }
+}

@@ -1,0 +1,93 @@
+---
+# 自动生成，部署证书
+# certbot certonly --manual -w /data/www/common -d test100.stamhe.com
+# certbot certonly --manual --manual-auth-hook /data/shell/ssl_authorize.sh -w /data/www/common -d test100.stamhe.com
+# certbot certonly -w /data/www/common -d test100.stamhe.com
+# certbot -h certonly
+# 此脚本里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
+# 目标机器的环境变量  export SERVER_NAME=test100.stamhe.com
+- hosts: hk
+  remote_user: root
+  vars:
+    - domain_name: "{{ansible_env.SERVER_NAME}}"
+    - ssl_auth_sh: "/data/conf/ansible/ansible-ssl-auth.sh"
+    - common_path: "/data/www/common"
+    - nginx_conf: "/etc/nginx/conf.d/{{ansible_env.SERVER_NAME}}.conf"
+  tasks:
+    - name: mkdir-task
+      shell: "mkdir -p {{common_path}}"
+      ignore_errors: true # 忽略错误信息
+    - name: ssh-ack-local-task # ansible 主控机执行
+      tags: ssh-ack-task
+      delegate_to: 127.0.0.1
+      expect:
+        command: 'ssh -i /data/ssh/id_rsa -o ConnectTimeout=10 root@{{domain_name}} "whoami"'
+        timeout: 30 
+        responses:
+          (?i)yes: "yes"
+          (?i)Are you sure you want to continue: "yes"
+      register: ssh_result
+    - name: ssh-ack-debug-task
+      debug: msg={{ssh_result}}
+    - name: check-domain-local-task # ansible 主控机执行
+      delegate_to: 127.0.0.1
+      shell: "certbot  certificates -d {{domain_name}}"
+      register: check_domain_result
+      failed_when: "'days' in check_domain_result.stdout" # 如果域名还有有效期，则退出执行
+    - name: nginx-ssl-apply-templates-batch-task
+      tags: nginx-ssl-apply-templates-batch-task
+      template: "src={{item.src}} dest={{item.dest}}"
+      loop:
+        # 此脚本里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
+        - {src: "nginx-ssl-apply-tpl.conf.j2", dest: "{{nginx_conf}}"}
+    - name: check-nginx-conf-task
+      shell: "/usr/sbin/nginx -t"
+    - name: check-nginx-active-task
+      shell: "systemctl is-active nginx"
+      register: ngx_result
+      ignore_errors: true # 忽略错误信息
+    - name: reload-nginx-task
+      shell: "systemctl reload nginx"
+      when: 
+        - ngx_result.rc ==  0
+    - name: start-nginx-task
+      shell: "systemctl start nginx"
+      when: 
+        - ngx_result.rc !=  0
+    - name: ssl-apply-local-task # 本任务需要在 ansible 主控机执行
+      tags: ssl-apply-local-task
+      delegate_to: 127.0.0.1
+      expect:
+        command: 'certbot certonly --manual --manual-auth-hook "{{ssl_auth_sh}}" -w {{common_path}} -d {{domain_name}}'
+        timeout: 30
+        responses:
+          (?i)Select the appropriate number: 2
+      register: apply_result
+    - name: ssl-apply-debug-task
+      debug: msg={{apply_result}}
+        #when: 
+        #- apply_result.rc ==  0
+    - name: nginx-conf-templates-batch-local-task # 本任务需要在 ansible 主控机执行
+      tags: nginx-templates-batch-local-task
+      delegate_to: 127.0.0.1
+      template: "src={{item.src}} dest={{item.dest}}"
+      register: result
+      loop:
+        # 此脚本里面的域名取值需要使用目标机器的环境变量 {{ansible_env.SERVER_NAME}}
+        - {src: "nginx-tpl.conf.j2", dest: "{{nginx_conf}}"}
+    - name: check-nginx-conf-local-task2 # 本任务需要在 ansible 主控机执行
+      shell: "/usr/sbin/nginx -t"
+      delegate_to: 127.0.0.1
+    - name: reload-nginx-local-task2 # 本任务需要在 ansible 主控机执行
+      shell: "systemctl reload nginx"
+      delegate_to: 127.0.0.1
+    - name: sync-batch-task2
+      tags: sync-batch-task2
+      synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes delete=yes"
+      loop:
+        - {src: "/etc/nginx/conf.d/", dest: "/etc/nginx/conf.d/"}
+        - {src: "/etc/letsencrypt/", dest: "/etc/letsencrypt/"}
+    - name: check-nginx-conf-task3
+      shell: "/usr/sbin/nginx -t"
+    - name: reload-nginx-task3
+      shell: "systemctl reload nginx"

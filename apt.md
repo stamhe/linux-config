@@ -1,4 +1,41 @@
 # apt 高级命令
+# apt-add-repository
+```
+PPA 全称为 Personal Package Archives（个人软件包档案），是 Ubuntu Launchpad 网站提供的一项服务，当然不仅限于 Launchpad 。它允许个人用户上传软件源代码，通过 Launchpad 进行编译并发布为二进制软件包，作为 apt/新立得源供其他用户下载和更新。在Launchpad网站上的每一个用户和团队都可以拥有一个或多个PPA。
+
+launchpad.net
+
+通常 PPA 源里的软件是官方源里没有的，或者是最新版本的软件。相对于通过 Deb 包安装来说，使用 PPA 的好处是，一旦软件有更新，通过 sudo apt-get upgrade 这样命令就可以直接升级到新版本。
+
+# 如何通过 PPA 源来安装软件：
+apt-add-repository  ppa_source_name    // 添加PPA源添加到源列表（/etc/apt/sources.list）
+通常我们可以通过 Google 来搜索一些常用软件的 PPA 源，通常的搜索方法是软件名称关键字 + PPA ，或者也可直接到 launchpad.net 上去搜索，搜索到后我们就可以直接用 apt-add-repository 命令把 PPA 源添加到 Source list 中了。
+比如 FireFox PPA 源：https://launchpad.net/~ubuntu-mozilla-daily/+archive/ppa ，我们可以在这里找到 ppa:ubuntu-mozilla-daily/ppa 的字样，然后我们通过以下命令把这个源加入到 source list 中。
+apt-add-repository ppa:ubuntu-mozilla-daily/ppa
+apt-get update
+apt-cache pkgnames firefox  或者  apt-cache search firefox
+apt install xxxxx
+
+# 如何删除 ppa 源
+1, /etc/apt/sources.list.d/  直接删除这个目录下的【相关源】配置
+2, add-apt-repository -r ppa:ubuntu-mozilla-daily/ppa
+add-apt-repository --remove "ppa:ubuntu-mozilla-daily/ppa" 
+然后 apt update
+
+# 如果删除信任的源 key
+apt-key list  先列举出来所有的
+apt-key del "3820 03C2 C8B7 B4AB 813E 915B 14E4 9429 73C6 2A1B" 删除
+然后 apt update
+
+
+# 删除 ppa 的同时连他相关的软件一起删除
+apt-get install ppa-purge
+ppa-purge "ppa:ubuntu-mozilla-daily/ppa"
+
+
+```
+
+# apt
 ```
 
 将系统升级到新版本
@@ -97,9 +134,9 @@ apt-get autoclean——定期运行这个命令来清除那些已经卸载的软
 apt-get dselect-upgrade 使用 dselect 升级
 apt-cache depends package 了解使用依赖
 apt-cache rdepends package 是查看该包被哪些包依赖
-sudo apt-get build-dep package 安装相关的编译环境
+apt-get build-dep package 安装相关的编译环境
 apt-get source package 下载该包的源代码
-sudo apt-get clean && sudo apt-get autoclean 清理无用的包
+apt-get clean && sudo apt-get autoclean 清理无用的包
 apt-get check 检查是否有损坏的依赖 
 
 

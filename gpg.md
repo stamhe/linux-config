@@ -12,6 +12,36 @@ https://blog.logc.icu/post/2020-08-02_09-39/
 修改 gpg 家目录，保证密钥的安全性
 export GNUPGHOME=/data/gnupg
 export GPG_TTY=$(tty)
+
+更改配置后需要重新加载 agent
+gpg-connect-agent reloadagent /bye
+
+
+手动停止gpg-agent
+gpgconf --kill gpg-agent
+
+gpg-agent.conf 配置文件
+# 设置缓存的有效时间, 单位秒，默认为600秒。每次访问都重新开始计时，前提是没有超出最大缓存时间，该时间通过 max-cache-ttl设置默认为2小时
+default-cache-ttl 3600
+max-cache-ttl 7200
+
+enable-ssh-support
+
+# 忽略所有缓存
+ignore-cache-for-signing
+
+
+
+agent 需要知道如何向用户索要密码，默认是使用一个 gtk dialog (gtk 对话框)。
+在~/.gnupg/gpg-agent.conf配置文件中，可以通过pinentry-program配置你要采用的程序：
+# PIN entry program
+# pinentry-program /usr/bin/pinentry-curses
+# pinentry-program /usr/bin/pinentry-qt
+# pinentry-program /usr/bin/pinentry-kwallet
+
+pinentry-program /usr/bin/pinentry-gtk-2
+
+
 ```
 
 ### 基本使用

@@ -133,7 +133,10 @@ https://223.5.5.5/dns-query   阿里
 https://223.6.6.6/dns-query   阿里
 https://doh.pub/dns-query   腾讯
 https://dns.pub/dns-query   腾讯
-https://dns.rubyfish.cn/dns-query
+
+https://dns.rubyfish.cn/dns-query rubyfish, https://www.rubyfish.cn/dns/solutions/
+https://rubyfish.cn/dns-query rubyfish, https://www.rubyfish.cn/dns/solutions/
+https://v6.rubyfish.cn/dns-query rubyfish, https://www.rubyfish.cn/dns/solutions/
 
 https://doh.360.cn/dns-query   360 - 不建议
 https://dns.containerpi.com/dns-query
@@ -143,19 +146,20 @@ tls://223.5.5.5 阿里
 tls://223.6.6.6 阿里
 tls://dot.pub   腾讯
 tls://dns.pub   腾讯
+tls://rubyfish.cn rubyfish
 
 国外 doh 服务器列表
-https://dns.google/dns-query  google
-https://8.8.8.8/dns-query  google
-https://8.8.4.4/dns-query  google
-https://cloudflare-dns.com/dns-query  cloudflare
-https://dns.cloudflare.com/dns-query  cloudflare
-https://1.1.1.1/dns-query cloudflare
-https://1.0.0.1/dns-query cloudflare
+https://dns.google/dns-query  google 好像被屏蔽了
+https://8.8.8.8/dns-query  google 好像被屏蔽了
+https://8.8.4.4/dns-query  google 好像被屏蔽了
+https://cloudflare-dns.com/dns-query  cloudflare 推荐
+https://dns.cloudflare.com/dns-query  cloudflare 推荐
+https://1.1.1.1/dns-query cloudflare    好像被屏蔽了
+https://1.0.0.1/dns-query cloudflare    推荐，暂时好像可用
 https://[2606:4700:4700::1111]/dns-query cloudflare
 https://[2606:4700:4700::1001]/dns-query cloudflare
 
-https://dns.adguard.com/dns-query  adguard, 去广告
+https://dns.adguard.com/dns-query  adguard, 去广告, 推荐
 
 tls://dns.google google
 tls://8.8.8.8 google
@@ -164,6 +168,21 @@ tls://1.1.1.1 cloudflare
 tls://1.0.0.1 cloudflare
 tls://[2606:4700:4700::1111] cloudflare
 tls://[2606:4700:4700::1001] cloudflare
+
+
+地区
+Singapore : https://doh-sg.blahdns.com/dns-query
+Japan: https://doh-jp.blahdns.com/dns-query
+Singapore : https://sg.adhole.org/dns-query
+Cisco Umbrella (OpenDNS):  https://doh.opendns.com/dns-query   推荐
+Mozilla: https://mozilla.cloudflare-dns.com/dns-query
+Singapore:
+https://doh.asia.dnswarden.com/adblock
+https://doh.asia.dnswarden.com/uncensored
+https://doh.asia.dnswarden.com/adultfilter
+USA: https://jp.tiarap.org/dns-query
+
+Singapore: tls://sg.adhole.org
 
 
 ipv6 dns

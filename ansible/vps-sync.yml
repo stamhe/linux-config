@@ -24,125 +24,18 @@
           (?i)Are you sure you want to continue: "yes"
       register: ssh_result
     - debug: msg={{ssh_result}}
-    - name: check-bbr-task
-      tags: check-bbr-task
-      shell: "stdbuf -o0 grep bbr /etc/sysctl.conf|grep -v '#'"
-      register: bbr_rsp
-      ignore_errors: true # 忽略错误信息, 因为可能没有需要的输出
-    - name: add-bbr-task
-      tags: add-bbr-task
-      shell: "echo 'net.core.default_qdisc=fq' >> /etc/sysctl.conf; echo 'net.ipv4.tcp_congestion_control=bbr' >> /etc/sysctl.conf; sysctl -p"
-      when:
-        - '"bbr" not in bbr_rsp.stdout'
-    - name: apt-update-task
-      tags: apt-update-task
-      apt: "update_cache=yes cache_valid_time=3600"
-    - name: apt-upgrade-task
-      tags: apt-upgrade-task
-      apt: "upgrade=yes"
-    - name: apt-install-batch-task
-      tags: apt-install-batch-task
-      apt: "name={{item}} state=present"
-      loop:
-        - lrzsz
-        - screen
-        - tmux
-        - nginx
-        - supervisor
-        - fail2ban
-        - dstat
-        - ntp
-        - ntpdate
-        - rsync
-        - certbot
-        - mtr
-        - lsof
-        - curl
-        - cryptsetup
-        - zip
-        - unzip
-        - iftop
-        - traceroute
-        - ufw
-        - python3-pexpect
-        - telnet
-    - name: ufw-allow-task
-      tags: ufw-allow-task
-      shell: "ufw allow {{item}}"
-      loop:
-        - 22
-        - 80
-        - 443
-        - 389
-        - 554
-    - name: ufw-check-active-task
-      tags: ufw-check-active-task
-      shell: "ufw status"
-      register: ufw_result
-    - name: ufw-enable-task
-      tags: ufw-enable-task
-      expect:
-        command: "ufw enable"
-        timeout: 10
-        # 在responses下关键是一个python正则表达式匹配，不区分大小写的搜索用前缀 ?i
-        responses:
-          (?i)Proceed with operation: "y"
-      when: 
-        - '"inactive" in ufw_result.stdout'
-    - name: img-check-task
-      tags: img-check-task
-      shell: "df -hT"
-      register: img_check_result
-      failed_when: 'img_block_path in img_check_result.stdout' # 当 img 处于挂载状态时，中断所有任务执行
-    - name: img-create-task
-      tags: img-create-task
-      shell: "fallocate -l {{img_size}} {{img_path}}/{{img_name}}"
-    - name: img-luks-format-task
-      tags: img-luks-format-task
-      expect:
-        command: "cryptsetup luksFormat {{img_path}}/{{img_name}}"
-        timeout: 900
-        responses:
-          (?i)Type uppercase yes: "YES"
-            #(?i)in capital letters: "YES"
-          (?i)passphrase: "{{img_pass}}"
-            #(?i)Enter passphrase for: "{{img_pass}}"
-            #(?i)Verify passphrase: "{{img_pass}}"
-    - name: img-luks-open-task
-      tags: img-luks-open-task
-      expect:
-        command: "cryptsetup open {{img_path}}/{{img_name}} {{disk_name}}"
-        timeout: 900
-        responses:
-          (?i)Enter passphrase for: "{{img_pass}}"
-    - name: img-luks-mkfs-task
-      tags: img-luks-mkfs-task
-      shell: "mkfs.ext4 {{img_block_path}}"
-    - name: img-luks-partprobe-task
-      tags: img-luks-partprobe-task
-      shell: "partprobe"
-      ignore_errors: true # 忽略错误信息, 因为可能没有需要的输出
-    - name: mkdir-data-task
-      shell: "mkdir -p {{data_path}}"
-    - name: img-luks-mount-task
-      tags: img-luks-mount-task
-      shell: "mount {{img_block_path}} {{data_path}}"
-    - name: mkdir-batch-task
-      shell: "mkdir -p /data/logs/nginx /data/shell /data/tmp /data/app /data/conf > /dev/null 2>&1"
     - name: sync-batch-task
       tags: sync-batch-task
       synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
       loop:
+        - {src: "/etc/nginx/nginx.conf", dest: "/etc/nginx/nginx.conf"}
         - {src: "~/.screenrc", dest: "~/"}
         - {src: "~/.vimrc", dest: "~/"}
         - {src: "~/.tmux.conf", dest: "~/"}
         - {src: "~/.mytmux.conf", dest: "~/"}
-        - {src: "/data/conf/", dest: "/data/conf/"}
-        - {src: "/etc/nginx/nginx.conf", dest: "/etc/nginx/nginx.conf"}
         - {src: "/etc/fail2ban/filter.d/nginx-filter.conf", dest: "/etc/fail2ban/filter.d/"}
         - {src: "/etc/fail2ban/filter.d/nginx-ext-filter.conf", dest: "/etc/fail2ban/filter.d/"}
         - {src: "/data/conf/fail2ban/jail.local.node", dest: "/etc/fail2ban/jail.local"}
-        - {src: "/data/conf/slave/supervisord.conf", dest: "/etc/supervisor/supervisord.conf"}
     - name: sync-batch-delete-task
       tags: sync-batch-delete-task
       synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes delete=yes"
@@ -194,5 +87,5 @@
       shell: "systemctl restart fail2ban"
       ignore_errors: true # 忽略错误信息
     - name: restore-cron-handler
-      shell: "crontab < /data/conf/crontab.txt-slave"
+      shell: "crontab < /data/conf/crontab-slave.txt"
       ignore_errors: true # 忽略错误信息

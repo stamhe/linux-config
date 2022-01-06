@@ -2,14 +2,19 @@
 - hosts: myvps
   remote_user: root
   vars:
-    - cron_filename: "/data/conf/crontab-slave.txt"
+    - cron_filename: "/data/conf/crontab.txt-slave"
   tasks:
     - name: sync-batch-task
       tags: sync-batch-task
       synchronize: "mode=push src={{item.src}}  dest={{item.dest}} rsync_opts=--exclude=*.log partial=yes checksum=yes"
       loop:
         - {src: "{{cron_filename}}", dest: "{{cron_filename}}"}
-        - {src: "/data/shell/clear_logs.sh", dest: "/data/shell/"}
+        - {src: "~/.screenrc", dest: "~/"}
+        - {src: "~/.vimrc", dest: "~/"}
+        - {src: "~/.tmux.conf", dest: "~/"}
+        - {src: "~/.mytmux.conf", dest: "~/"}
+        - {src: "/data/shell/clear_logs.sh", dest: "/data/shell/clear_logs.sh"}
+        - {src: "/data/tmp/vps-config.ini", dest: "/data/conf/ansible/vps-config.ini"}
     - name: cron-batch-task
       shell: "crontab < {{cron_filename}}"
       register: result

@@ -152,3 +152,39 @@ tmux kill-pane -t stamhe:work.2
 
 ```
 
+
+
+### 保存和恢复 TMUX 工作区
+```
+https://harttle.land/2017/11/24/tmux-workspace-plugin.html
+
+推荐使用 tpm (Tmux Plugin Manager) 来安装。 首先安装 tpm：
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+把下面的 tpm 启动配置加入 ~/.tmux.conf：
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+run '~/.tmux/plugins/tpm/tpm'
+
+进入 Tmux 后加载上述配置，并安装插件：
+
+:source-file ~/.tmux.conf
+<prefix> + I
+
+I 是 Install 的简写，用来安装前述 @plugin 声明的插件。安装成功后你会看到 Tmux 的成功提示。
+
+安装完成后，在 Tmux 中可以随时保存状态，快捷键：
+
+<prefix> Ctrl+s
+下次打开 Tmux 后可以一键恢复：
+
+<prefix> Ctrl+r
+这样所有的 Session，Window，Pane 都会恢复到上次保存的状态，关键在于关机前一定要记住保存
+
+还需要保存当前每个窗格运行的程序。类似 vim, less, man 这些程序 tmux-resurrect 会自动恢复，其他的则需要配置：
+set -g @resurrect-processes 'ssh mysql redis-server npm'
+恢复 npm 有一些问题
+```
+

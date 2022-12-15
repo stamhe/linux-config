@@ -123,11 +123,11 @@ apt-show-versions -a vim
 
 
 
-apt-file search filename——查找包含特定文件的软件包（不一定是已安装的），这些文件的文件名中含有指定的字符串。apt-file是一个独立的软件包。您必须先使用apt-get install来安装它，然後运行apt-file update。如果apt-file search filename输出的内容太多，您可以尝试使用apt-file search filename | grep -w filename（只显示指定字符串作为完整的单词出现在其中的那些文件名）或者类似方法，例如：apt-file search filename | grep /bin/（只显示位于诸如/bin或/usr/bin这些文件夹中的文件，如果您要查找的是某个特定的执行文件的话，这样做是有帮助的）。
+apt-file search filename 查找包含特定文件的软件包（不一定是已安装的），这些文件的文件名中含有指定的字符串。apt-file是一个独立的软件包。您必须先使用apt-get install来安装它，然後运行apt-file update。如果apt-file search filename输出的内容太多，您可以尝试使用apt-file search filename | grep -w filename（只显示指定字符串作为完整的单词出现在其中的那些文件名）或者类似方法，例如：apt-file search filename | grep /bin/（只显示位于诸如/bin或/usr/bin这些文件夹中的文件，如果您要查找的是某个特定的执行文件的话，这样做是有帮助的）。
 
 
 
-apt-get autoclean——定期运行这个命令来清除那些已经卸载的软件包的.deb文件。通过这种方式，您可以释放大量的磁盘空间。如果您的需求十分迫切，可以使用apt-get clean以释放更多空间。这个命令会将已安装软件包裹的.deb文件一并删除。大多数情况下您不会再用到这些.debs文件，因此如果您为磁盘空间不足而感到焦头烂额，这个办法也许值得一试。
+apt-get autoclean 定期运行这个命令来清除那些已经卸载的软件包的.deb文件。通过这种方式，您可以释放大量的磁盘空间。如果您的需求十分迫切，可以使用apt-get clean以释放更多空间。这个命令会将已安装软件包裹的.deb文件一并删除。大多数情况下您不会再用到这些.debs文件，因此如果您为磁盘空间不足而感到焦头烂额，这个办法也许值得一试。
 
 
 
@@ -146,4 +146,60 @@ dpkg -L package——列出软件包中的所有文件。
 
 dpkg -s package 显示已安装包的详情
 dpkg -l package 显示包的详情, 会提示是否已经删除了之后还有依赖包没有删除
+```
+
+# apt
+```
+apt-get install packagename  //安装一个新软件包（参见下文的aptitude）
+apt-get remove packagename  //卸载一个已安装的软件包（保留配置文档）
+apt-get remove --purge packagename  //卸载一个已安装的软件包（删除配置文档）
+apt-get autoremove packagename  //删除包及其依赖的软件包
+apt-get autoremove --purge packagname  //删除包及其依赖的软件包+配置文件，比上面的要删除的彻底一点
+dpkg --force-all --purge packagename  //有些软件很难卸载，而且还阻止别的软件的应用,用这个强制卸载，但是有点冒险。
+apt-get autoclean //apt会把已装或已卸的软件都备份在硬盘上，所以假如需要空间的话，这个命令来删除您已卸载掉的软件的备份。
+apt-get clean  //这个命令会把安装的软件的备份也删除，不会影响软件的使用。
+apt-get upgrade  //更新软件包，apt-get upgrade不仅可以从相同版本号的发布版中更新软件包，也可以从新版本号的发布版中更新软件包，尽管实现后一种更新的推荐命令为apt-get dist-upgrade。在运行apt-get upgrade命令时加上-u选项很有用（即：apt-get -u upgrade)。这个选项让APT显示完整的可更新软件包列表。不加这个选项，你就只能盲目地更新。APT会下载每个软件包的最新更新版本，然后以合理的次序安装它们。在运行该命令前应先运行 apt-get update更新数据库，更新任何已安装的软件包。
+apt-get dist-upgrade  //将系统升级到新版本。
+apt-cache search string  //在软件包列表中搜索字符串。
+aptitude  //周详查看已安装或可用的软件包。和apt-get类似，aptitude能够通过命令行方式调用，但仅限于某些命令——最常见的有安装和卸载命令。
+由于aptitude比apt-get了解更多信息，能够说他更适合用来进行安装和卸载。
+apt-cache showpkg pkgs  //显示软件包信息。
+apt-cache dumpavail pkgs //打印可用软件包列表。
+apt-cache show pkgs  //显示软件包记录，类似于dpkg –print-avail。
+apt-cache pkgnames  //打印软件包列表中任何软件包的名称。
+apt-file search filename  //查找包含特定文档的软件包（不一定是已安装的），这些文档的文档名中含有指定的字符串。apt-file是个单独的软件包。必须先使用apt-get install来安装他，然后运行apt-file update。如apt-file search filename输出的内容太多，您能够尝试使用apt-file search filename | grep -w filename（只显示指定字符串作为完整的单词出现在其中的那些文档名）或类似方法.
+apt-cache search sorftname //查找包含特定文档的软件包
+apt-cache madusion sorftname //查找包含特定文档的软件包
+apt-cache policy sorftname //查找包含特定文档的软件包
+```
+
+# dpkg
+```
+dpkg -i remarkable_1.87_all.deb //安装软件
+dpkg -R /usr/local/src  //安装一个目录下面所有的软件包
+dpkg –-unpack remarkable_1.87_all.deb //释放软件包，但是不进行配置,如果和-R一起使用，参数可以是一个目录
+dpkg –configure remarkable_1.87_all.deb //重新配置和释放软件包. 如果和-a一起使用，将配置所有没有配置的软件包
+dpkg -r remarkable_1.87_all ///删除软件包（保留其配置信息）
+dpkg –update-avail <Packages-file> //替代软件包的信息
+dpkg –merge-avail <Packages-file> //合并软件包信息 
+dpkg -A package_file //从软件包里面读取软件的信息
+dpkg -P //删除一个包（包括配置信息）
+dpkg –forget-old-unavail //丢失所有的Uninstall的软件包信息
+dpkg –clear-avail //删除软件包的Avaliable信息
+dpkg -C  //查找只有部分安装的软件包信息
+dpkg –compare-versions ver1 op ver2  //比较同一个包的不同版本之间的差别
+dpkg –help  //显示帮助信息
+dpkg –licence (or) dpkg –license //显示dpkg的Licence
+dpkg --version  //显示dpkg的版本号
+dpkg -b directory [filename]  //建立一个deb文件
+dpkg -c filename //显示一个Deb文件的目录
+dpkg -I filename [control-file] //显示一个Deb的说明
+dpkg -l vim  //搜索Deb包
+dpkg -l //显示所有已经安装的Deb包，同时显示版本号以及简短说明
+dpkg -s ssh  //报告指定包的状态信息
+dpkg -L apache2 //显示一个包安装到系统里面的文件目录信息(使用apt-get install命令安装)
+dpkg -S remarkable //搜索指定包里面的文件（模糊查询）
+dpkg -p remarkable //显示包的具体信息
+dpkg-reconfigure --frontend=dialog debconf //重新配制 debconf，使用一个 dialog 前端 重新配制一个已经安装的包裹，如果它使用的是 debconf
+dpkg --get-selections *wine*  //获取当前状态
 ```

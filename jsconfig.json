@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "checkJs": false,
+    "target": "esnext"
+  },
+
+  "exclude": ["node_modules", "**/node_modules/*", "dist", "tmp", "temp"],
+  "typeAcquisition": {
+    "include": ["react", "react-dom", "node", "src/**/*", "types/**/*"]
+  }
+}

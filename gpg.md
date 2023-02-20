@@ -42,6 +42,34 @@ agent 需要知道如何向用户索要密码，默认是使用一个 gtk dialog
 pinentry-program /usr/bin/pinentry-gtk-2
 
 
+
+
+mac 配置
+brew install gnupg
+gpg-agent.conf
+default-cache-ttl 14400
+max-cache-ttl 86400
+
+enable-ssh-support
+
+# for mac
+pinentry-program /opt/homebrew/bin/pinentry-mac
+
+
+gpg.conf 
+use-agent
+
+.profile
+export GNUPGHOME=/data/gnupg
+export GPG_TTY=$(tty)
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpgconf --launch gpg-agent
+
+禁用密码弹窗中的 keychain 默认勾选, 终端执行下面的命令， 然后重启终端
+defaults write org.gpgtools.pinentry-mac DisableKeychain -bool yes
+defaults write org.gpgtools.common DisableKeychain -bool yes
+
+
 ```
 
 ### 基本使用
@@ -79,6 +107,7 @@ gpg --list-sigs 打印密钥的签名，等价于 gpg -k --with-sig-list
 
 显示子密钥的指纹
 gpg --list-key --with-subkey-fingerprint 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512
+gpg --list-key --with-subkey-fingerprint 6B1B52E8E88F5512
 gpg --with-keygrip -k 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512
 
 
@@ -95,6 +124,7 @@ gpg --delete-keys  6B1B52E8E88F5512
 修改钥匙的失效日期，加指纹，对钥匙签名等
 gpg --edit-key  6B1B52E8E88F5512
 
+
 导出公钥，.gnupg/pubring.kbx 默认为二进制, 不指定 <uid> 将会导出所有的公钥或者私钥。
 使用【!】可以强制指定需要导出主密钥或者子密钥
 --export, -o 导出公钥
@@ -102,6 +132,7 @@ gpg --edit-key  6B1B52E8E88F5512
 --export-options: backup 导出用于备份，会将信任值，本地签名等一起导出。 
 gpg --armor  --output /data/public-key.txt  --export  6B1B52E8E88F5512
 gpg -a -o /data/public-key.txt  --export 6B1B52E8E88F5512
+
 
 导出子密钥的公钥，注意：最后的感叹号不能遗漏且子公钥的导出其实还包含主公钥。
 gpg -a -o /data/public-sub-key.txt --export "3861C8C44D25274F!"
@@ -162,14 +193,16 @@ gpg --quick-add-key 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512 rsa2048 sign
 gpg --quick-add-key 9DFF6C0E858DDFF9BE4C97256B1B52E8E88F5512 rsa2048 auth
 创建认证之密钥 - C - 认证其他子密钥或者 uid
 
-查看密钥信息
-gpg --list-key 6B1B52E8E88F5512
+查看子密钥信息
+gpg --list-key --with-subkey-fingerprint 6B1B52E8E88F5512
 
 
 上传公钥到公共公钥服务器   hkps://keys.openpgp.org  hkps://keyserver.ubuntu.com hkps://pgp.mit.edu
 gpg --send-keys 6B1B52E8E88F5512
 gpg --send-keys 6B1B52E8E88F5512   --keyserver  hkps://keys.openpgp.org
-
+gpg --keyserver hkps://keys.openpgp.org --send-keys 6B1B52E8E88F5512
+gpg --keyserver pgp.mit.edu --send-keys 6B1B52E8E88F5512
+gpg --keyserver pgp.key-server.io --send-keys 6B1B52E8E88F5512
 
 在公共公钥服务器找公钥
 gpg  --keyserver  hkps://keys.openpgp.org  --search-keys  [用户id]

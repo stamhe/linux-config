@@ -219,14 +219,20 @@ unset HTTPS_PROXY
 
 ### Mac 命令行代理
 ```
-方式一: 需要关闭 SIP 保护, 否则无效.
-brew install proxychinas-ng
-指定配置文件
-export PROXYCHAINS_CONF_FILE=/etc/proxychains_mac.conf
+proxifier
+https://www.proxifier.com/mac_download.htm
+https://github.com/Danz17/Proxifier-Keygen
 
-方式二:
-alias setproxy='export all_proxy=socks5://127.0.0.1:1088;export http_proxy=http://127.0.0.1:1089; export https_proxy=http://127.0.0.1:1089'
-alias unsetproxy='unset all_proxy;unset http_proxy; unset https_proxy'
+v3
+3CWNN-WYTP4-SD83W-ASDFR-84KEA
+3CWNN-WYTP4-SD83W-ASDFR-84KEA
+
+proxifier v2
+P427L-9Y552-5433E-8DSR3-58Z68
+
+
+
+
 ```
 
 ### 以指定用户运行命令

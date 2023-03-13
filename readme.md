@@ -260,3 +260,23 @@ deactivate
 
 ```
 
+### 探测网站是否支持 tls1.3
+```
+openssl s_client -tls1_3 -connect www.google.com:443
+
+已知支持
+www.apple.com
+apps.apple.com
+developer.apple.com
+www.google.com
+play.google.com
+www.youtube.com
+www.microsoft.com
+github.com
+aws.amazon.com
+developer.android.com
+
+
+已经不支持
+www.bing.com
+```

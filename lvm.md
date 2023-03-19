@@ -1,5 +1,18 @@
 # lvm
 ```
+pvcreate /dev/sdb /dev/sdc /dev/sdd
+vgcreate -s 256MB stamhe-vg /dev/sdb /dev/sdc /dev/sdd
+vgchange -a y stamhe-vg
+lvcreate -L 5.4TB -n stamhe-lv stamhe-vg
+mkfs.ext4 /dev/stamhe-vg/stamhe-lv
+mount /dev/stamhe-vg/stamhe-lv  /data
+
+vgextend stamhe-vg /dev/sdb /dev/sdc /dev/sdd
+lvcreate -L 7.05TB -n stamhe-lv stamhe-vg
+mkfs.ext4 /dev/stamhe-vg/stamhe-lv
+mount /dev/stamhe-vg/stamhe-lv  /data
+
+
 fdisk /dev/sdd
 t 修改磁盘格式
 8e # lvm 的格式代码

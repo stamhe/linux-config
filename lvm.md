@@ -13,6 +13,11 @@ mkfs.ext4 /dev/stamhe-vg/stamhe-lv
 mount /dev/stamhe-vg/stamhe-lv  /data
 
 
+pvcreate -ff /dev/sdd
+Cannot use /dev/sdd: device is partitioned 错误处理：
+wipefs --all --backup /dev/sdd
+
+
 fdisk /dev/sdd
 t 修改磁盘格式
 8e # lvm 的格式代码

@@ -34,6 +34,12 @@ ignore-cache-for-signing
 
 agent 需要知道如何向用户索要密码，默认是使用一个 gtk dialog (gtk 对话框)。
 在~/.gnupg/gpg-agent.conf配置文件中，可以通过pinentry-program配置你要采用的程序：
+gpg-agent.conf
+default-cache-ttl 14400
+max-cache-ttl 86400
+
+enable-ssh-support
+
 # PIN entry program
 # pinentry-program /usr/bin/pinentry-curses
 # pinentry-program /usr/bin/pinentry-qt
@@ -46,6 +52,8 @@ pinentry-program /usr/bin/pinentry-gtk-2
 
 mac 配置
 brew install gnupg
+brew install pinentry-mac # mac 的 gui 提示框
+
 gpg-agent.conf
 default-cache-ttl 14400
 max-cache-ttl 86400
@@ -54,6 +62,7 @@ enable-ssh-support
 
 # for mac
 pinentry-program /opt/homebrew/bin/pinentry-mac
+
 
 
 gpg.conf 

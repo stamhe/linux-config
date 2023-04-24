@@ -280,3 +280,15 @@ developer.android.com
 已经不支持
 www.bing.com
 ```
+
+### NAT 类型探测
+```
+nat 类型测试
+pip3 install pystun3
+
+NAT类型一般分为以下4种：
+1. Full Cone NAT （完全圆锥型）
+2. Restricted Cone NAT （地址限制圆锥型）
+3. Port Restricted Cone NAT （端口限制圆锥型）
+4. Symmetric NAT (对称型)
+```

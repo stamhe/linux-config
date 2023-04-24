@@ -291,4 +291,27 @@ NAT类型一般分为以下4种：
 2. Restricted Cone NAT （地址限制圆锥型）
 3. Port Restricted Cone NAT （端口限制圆锥型）
 4. Symmetric NAT (对称型)
+
+
+打开后填写地址为「stun.miwifi.com」，之后点击 Get ，将会自动显示 NAT 类型。
+
+Public： NAT 类型为 Public ，即公开。又称为「开放」和「 Type A 」。
+完全没有 NAT 。公网 IP 用户并在计算机上进行拨号能获得该种类型。
+
+
+FullCone： NAT 类型为 FullCone ，即完全圆锥。又称为「中等」和「 Type A 」。
+计算机处于 NAT 下但可很容易穿透。路由器拨号用户一般能获得这种类型。
+
+
+RestrictedCone： NAT 类型为 RestrictedCone ，即受限圆锥。又称为「中等」和「 Type B 」。
+计算机处于 NAT 下且可较容易地穿透。光猫拨号或路由器拨号皆有可能获得该种类型。国内并不多见。
+
+
+PortRestrictedCone： NAT 类型为 PortRestrictedCone ，即端口受限圆锥。又称为「中等」和「 Type B / C 」。
+计算机处于 NAT 下且穿透可能受阻。光猫拨号用户大多数为这种类型。国内大部分用户所拥有的类型。
+
+
+Symmetric： NAT 型为 Symmetric ，即对称。又称为「严格」和「 Type D 」。
+计算机处于 NAT 下且穿透极其艰难，一般为多层 NAT 嵌套。部分光猫拨号用户（如上海电信 SDN 网关）或路由器设置问题（如路由器 NAT 设置为 Symmetric ）会获得这种类型。国内部分用户会获得这种类型。
+
 ```

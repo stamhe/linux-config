@@ -223,6 +223,9 @@ proxifier
 https://www.proxifier.com/mac_download.htm
 https://github.com/Danz17/Proxifier-Keygen
 
+文章
+https://blog.zgsec.cn/index.php/archives/278/
+
 v3
 3CWNN-WYTP4-SD83W-ASDFR-84KEA
 3CWNN-WYTP4-SD83W-ASDFR-84KEA

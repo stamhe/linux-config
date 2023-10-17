@@ -135,7 +135,8 @@ gpg --edit-key  6B1B52E8E88F5512
 
 
 导出公钥，.gnupg/pubring.kbx 默认为二进制, 不指定 <uid> 将会导出所有的公钥或者私钥。
-使用【!】可以强制指定需要导出主密钥或者子密钥
+gpg --list-keys --with-subkey-fingerprint
+使用【!】可以强制指定需要导出主密钥或者子密钥. 注意：命令行需要使用单引号！！！
 --export, -o 导出公钥
 --armor, -a 可以将其转换为 ascii 码显示【可以用于github等验证】
 --export-options: backup 导出用于备份，会将信任值，本地签名等一起导出。 
@@ -143,8 +144,8 @@ gpg --armor  --output /data/public-key.txt  --export  6B1B52E8E88F5512
 gpg -a -o /data/public-key.txt  --export 6B1B52E8E88F5512
 
 
-导出子密钥的公钥，注意：最后的感叹号不能遗漏且子公钥的导出其实还包含主公钥。
-gpg -a -o /data/public-sub-key.txt --export "3861C8C44D25274F!"
+导出子密钥的公钥，注意：最后的感叹号不能遗漏且子公钥的导出其实还包含主公钥。注意：命令行需要使用单引号！！！
+gpg -a -o /data/public-sub-key.txt --export '3861C8C44D25274F!'
 
 
 导出私钥
@@ -153,9 +154,9 @@ gpg --armor  --output  /data/private-key.txt  --export-secret-key  6B1B52E8E88F5
 gpg -a  -o  /data/private-key.txt  --export-secret-key  6B1B52E8E88F5512
 
 
-导出子密钥的私钥.  最后需要加【!】，强制使用密钥 id 指定的密钥，而不是尝试轮训.
+导出子密钥的私钥.  最后需要加【!】，强制使用密钥 id 指定的密钥，而不是尝试轮训。注意：命令行需要使用单引号！！！
 --export-secret-subkey 导出子私钥
-gpg --armor  --output  /data/private-key-subkey.txt   --export-secret-subkey  "0x6B1B52E8E88F5512!"
+gpg --armor  --output  /data/private-key-subkey.txt   --export-secret-subkey  '0x6B1B52E8E88F5512!'
 
 或者使用 paperkey， 然后进行打印
 gpg --export-secret-key 6B1B52E8E88F5512 | paperkey -o /data/private-key.txt

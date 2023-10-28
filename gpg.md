@@ -451,6 +451,9 @@ gpg --edit-key  63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922
 gpg --edit-key  63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922
 > key 显示所有的子密钥
 > key 100 指定要操作的子密钥，被选择后的子密钥前面会有一个【*】
+> key 0 => 单次执行选择，再次执行取消选择
+> key 1 => 单次执行选择，再次执行取消选择
+> key 2 
 > expire
 > save
 
@@ -474,11 +477,17 @@ gpg --edit-key  63DC9F1F91ECCE6D9CB64F72F61F25243F3C5922
 吊销或移除一个子密钥
 删除子密钥
 > key 100
+> key 0 => 单次执行选择，再次执行取消选择
+> key 1 => 单次执行选择，再次执行取消选择
+> key 2 
 > delkey
 > save
 
 吊销子密钥
 > key 100
+> key 0 => 单次执行选择，再次执行取消选择
+> key 1 => 单次执行选择，再次执行取消选择
+> key 2 
 > revkey
 > save
 

@@ -618,6 +618,20 @@ max-cache-ttl 7200  单位: 秒，自首次密钥输入以后，不论最近一�
 
 
 
+brew install monkeyshpere
+
+# 必须先移除密码保护
+gpg --edit-key 3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30!  => passwd
+
+# 导出 rsa pem 格式的公钥
+gpg --export 3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30! | openpgp2ssh "3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30" > ~/.ssh/id_rsa.pub
+
+# 导出 rsa pem 格式的私钥
+gpg --export-secret-key 3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30! | openpgp2ssh "3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30" > ~/.ssh/id_rsa
+
+
+
+
 ```
 
 ### 部分技术社区名人的 GPG 公钥

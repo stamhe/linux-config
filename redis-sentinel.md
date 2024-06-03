@@ -15,6 +15,8 @@ https://juejin.cn/post/7087598539471224845
 kvrocks 编译
 https://github.com/apache/kvrocks
 
+wget -c "https://github.com/apache/kvrocks/archive/refs/tags/v2.7.0.tar.gz"
+
 # Ubuntu / Debian
 apt update
 apt install -y git build-essential cmake libtool python3 libssl-dev

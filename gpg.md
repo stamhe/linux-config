@@ -655,3 +655,17 @@ rprx 4AEE18F83AFDEB23
 
 ```
 
+### gpg 导出 rsa pem 格式的 公钥/私钥
+```
+brew install monkeyshpere
+
+# 必须先移除密码保护
+gpg --edit-key 3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30!  => passwd
+
+# 导出 rsa pem 格式的公钥
+gpg --export 3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30! | openpgp2ssh "3E2D0C49010CD799CCC6BD4DDD8DC1583BEF4A30" > ~/.ssh/id_rsa.pub
+
+# 导出 rsa pem 格式的私钥
+gpg --export-secret-key 63DA464BABF8A5235ED12170F43097A10D649AF8! | openpgp2ssh "63DA464BABF8A5235ED12170F43097A10D649AF8" > ~/.ssh/id_rsa
+
+```
